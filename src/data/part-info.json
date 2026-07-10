@@ -1,186 +1,120 @@
 {
-  "Body5": {
-    "title": "",
-    "description": ""
-  },
-  "Gimbaswingarm": {
-    "title": "",
-    "description": ""
-  },
-  "HullMount": {
-    "title": "",
-    "description": ""
-  },
-  "LidarMount": {
-    "title": "",
-    "description": ""
-  },
-  "M1": {
-    "title": "",
-    "description": ""
-  },
-  "M2": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.009": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.008": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.007": {
-    "title": "",
-    "description": ""
-  },
-  "Body2.001": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.001": {
-    "title": "",
-    "description": ""
-  },
-  "2Back (1)": {
-    "title": "",
-    "description": ""
-  },
-  "2Back (2)": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.005": {
-    "title": "",
-    "description": ""
-  },
   "Body1.003": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.002": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.004": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.006": {
-    "title": "",
-    "description": ""
+    "title": "Main hull (vaka)",
+    "description": "The slender central hull of the trimaran. It houses the propulsion system, the 1.8 kWh battery on its trim rails and the main electronics, and its narrow planing form keeps drag low at speed."
   },
   "Body80": {
-    "title": "",
-    "description": ""
+    "title": "Main lid",
+    "description": "The powered locking lid that seals the central hull. Clinch motors driven by an ESP32 lock it down, a Hall sensor confirms closure before the vessel can arm, and an independent 9 V backup circuit can open it for recovery."
   },
-  "Body1": {
-    "title": "",
-    "description": ""
-  },
-  "Body2": {
-    "title": "",
-    "description": ""
-  },
-  "propeller_3": {
-    "title": "",
-    "description": ""
-  },
-  "propeller_3 (1)": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.018": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.011": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.012": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.013": {
-    "title": "",
-    "description": ""
-  },
-  "Body2.004": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.014": {
-    "title": "",
-    "description": ""
-  },
-  "Body2.005": {
-    "title": "",
-    "description": ""
-  },
-  "Body2.003": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.017": {
-    "title": "",
-    "description": ""
-  },
-  "Body2.008": {
-    "title": "",
-    "description": ""
-  },
-  "Body1.016": {
-    "title": "",
-    "description": ""
-  },
-  "Body2.007": {
-    "title": "",
-    "description": ""
+  "Body1.005": {
+    "title": "Front lid",
+    "description": "The forward hatch on the main hull, giving access to the bow compartment while keeping the hull sealed on the water."
   },
   "Body1.010": {
-    "title": "",
-    "description": ""
+    "title": "Side hull — right (ama)",
+    "description": "The starboard outrigger. Together the two outriggers carry roughly 60% of the vessel's buoyancy, giving the trimaran its wide, stable stance."
   },
-  "Body69": {
-    "title": "",
-    "description": ""
+  "Body1.017": {
+    "title": "Side hull — left (ama)",
+    "description": "The port outrigger. Together the two outriggers carry roughly 60% of the vessel's buoyancy, giving the trimaran its wide, stable stance."
+  },
+  "Body1.013": {
+    "title": "Slide mechanism — right hull (1)",
+    "description": "Element of the starboard slide mechanism. A linear actuator drives this linkage to shift the outrigger vertically, adjusting the righting moment as part of the active roll-stabilisation system."
+  },
+  "Body1.014": {
+    "title": "Slide mechanism — right hull (2)",
+    "description": "Companion element of the starboard slide mechanism, guiding the outrigger as the linear actuator extends and retracts."
+  },
+  "Body2.005": {
+    "title": "Extension arm — left hull (1)",
+    "description": "Extending element on the port side. Driven by a linear actuator, it moves the outrigger vertically to trim roll and keep the sensor platform level."
+  },
+  "Body2.004": {
+    "title": "Extension arm — left hull (2)",
+    "description": "Companion element of the port extension mechanism, transferring actuator motion to the outrigger."
   },
   "Body72": {
-    "title": "",
-    "description": ""
+    "title": "Main thruster — right",
+    "description": "The starboard main drive — a Flipsky 5085 brushless outrunner rated around 2.5 kW, commanded by a VESC 6.7 controller over the vehicle CAN bus."
   },
   "Body73": {
-    "title": "",
-    "description": ""
+    "title": "Main thruster — left",
+    "description": "The port main drive, identical to its starboard twin. Differential thrust between the pair steers the vessel — no rudder required."
   },
-  "Body2.002": {
-    "title": "",
-    "description": ""
+  "propeller_3": {
+    "title": "Propeller — right",
+    "description": "Starboard propeller, direct-driven by the main thruster."
   },
-  "Body47": {
-    "title": "",
-    "description": ""
+  "propeller_3 (1)": {
+    "title": "Propeller — left",
+    "description": "Port propeller, direct-driven by the main thruster."
   },
-  "Body48": {
-    "title": "",
-    "description": ""
+  "Body1.006": {
+    "title": "Stern side-thruster",
+    "description": "Lateral thruster mounted in the main hull. It pushes the stern sideways for precise station-keeping and docking manoeuvres, where differential thrust alone is too coarse."
+  },
+  "Body1": {
+    "title": "Rear lidar",
+    "description": "The aft-facing 360° 2D lidar (Slamtec RPLIDAR). Paired with the gimbal-stabilised front unit, it gives the vessel continuous range coverage on every bearing."
+  },
+  "Body5": {
+    "title": "GNSS antenna",
+    "description": "GNSS/compass antenna supplying global position and heading for waypoint navigation and line-of-sight guidance."
   },
   "Sphere": {
-    "title": "",
-    "description": ""
+    "title": "Camera — right",
+    "description": "The starboard 220° wide-angle camera. The camera pair adds what lidar cannot see — colour — classifying detected objects such as red and green channel markers."
   },
   "Sphere.001": {
-    "title": "",
-    "description": ""
+    "title": "Camera — left",
+    "description": "The port 220° wide-angle camera, mirroring the starboard unit to cover the full forward arc."
   },
-  "Cylinder.001": {
-    "title": "",
-    "description": ""
+  "M1": {
+    "title": "Lidar gimbal motor 1",
+    "description": "First of the two drive motors in the front-lidar gimbal, correcting the lidar's scan plane as the hull pitches and rolls."
   },
-  "Cylinder.002": {
-    "title": "",
-    "description": ""
-  }
+  "M2": {
+    "title": "Lidar gimbal motor 2",
+    "description": "Second drive motor of the front-lidar gimbal, completing the two-axis stabilisation of the scan plane."
+  },
+  "Body1.009": {
+    "title": "Lidar gimbal element",
+    "description": "Structural element of the front-lidar gimbal assembly."
+  },
+  "LidarMount": {
+    "title": "Lidar mount",
+    "description": "The mount carrying the front lidar within the gimbal assembly."
+  },
+  "Body1.007": {
+    "title": "Front lidar gimbal",
+    "description": "The IMU-driven gimbal that keeps the front 360° lidar's scan plane horizontal regardless of hull motion — the core of the stabilised sensor package."
+  },
+  "Gimbaswingarm": {
+    "title": "Gimbal swing arm",
+    "description": "Swing arm of the front-lidar gimbal, articulating the lidar as the stabilisation loop corrects for hull motion."
+  },
+  "HullMount": { "title": "", "description": "" },
+  "Body1.008": { "title": "", "description": "" },
+  "Body2.001": { "title": "", "description": "" },
+  "Body1.001": { "title": "", "description": "" },
+  "2Back (1)": { "title": "", "description": "" },
+  "2Back (2)": { "title": "", "description": "" },
+  "Body1.002": { "title": "", "description": "" },
+  "Body1.004": { "title": "", "description": "" },
+  "Body2": { "title": "", "description": "" },
+  "Body1.018": { "title": "", "description": "" },
+  "Body1.011": { "title": "", "description": "" },
+  "Body1.012": { "title": "", "description": "" },
+  "Body2.003": { "title": "", "description": "" },
+  "Body2.008": { "title": "", "description": "" },
+  "Body1.016": { "title": "", "description": "" },
+  "Body2.007": { "title": "", "description": "" },
+  "Body69": { "title": "", "description": "" },
+  "Body2.002": { "title": "", "description": "" },
+  "Body47": { "title": "", "description": "" },
+  "Body48": { "title": "", "description": "" },
+  "Cylinder.001": { "title": "", "description": "" },
+  "Cylinder.002": { "title": "", "description": "" }
 }

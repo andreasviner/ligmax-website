@@ -99,6 +99,16 @@
       });
     };
 
+    // Solid highlight material — the model's baked carbon materials are too dark
+    // for a subtle tint to read, so selection swaps to an unmistakable brand blue.
+    const highlightMaterial = new THREE.MeshStandardMaterial({
+      color: 0x3a62b4,
+      emissive: 0x16244c,
+      emissiveIntensity: 0.45,
+      metalness: 0.15,
+      roughness: 0.4,
+    });
+
     const selectPart = (mesh) => {
       if (selected) {
         selected.material = selected.userData.originalMaterial;
@@ -106,12 +116,7 @@
       }
       if (mesh) {
         selected = mesh;
-        const highlight = mesh.userData.originalMaterial.clone();
-        if ('emissive' in highlight) {
-          highlight.emissive = new THREE.Color(0x2b4c92);
-          highlight.emissiveIntensity = 0.85;
-        }
-        mesh.material = highlight;
+        mesh.material = highlightMaterial;
       }
       updatePanel(mesh);
     };
@@ -152,7 +157,7 @@
         controls.saveState();
 
         // Build the parts list, alphabetically
-        const sorted = [...parts].sort((a, b) => a.name.localeCompare(b.name, 'en'));
+        const sorted = [...parts].sort((a, b) => prettify(a.name).localeCompare(prettify(b.name), 'en'));
         countEl.textContent = `(${sorted.length})`;
         for (const mesh of sorted) {
           const li = document.createElement('li');

@@ -6,24 +6,39 @@ import batteryPack from '../assets/battery-pack-assembly.jpeg';
 import lidarTest from '../assets/lidar-scan-test.png';
 import buoyDetection from '../assets/buoy-detection.png';
 import rollTrim from '../assets/roll-trim-outriggers.png';
+import gimbalDrawing from '../assets/lidar-gimbal-drawing.png';
 
 const features = [
   {
     title: 'Active stabilisation',
     eyebrow: 'Headline innovation',
-    image: batteryTrim,
-    alt: 'Cutaway render showing the battery sliding fore and aft inside the main hull',
+    images: [
+      {
+        image: batteryTrim,
+        alt: 'Cutaway render showing the battery sliding fore and aft inside the main hull',
+        caption: 'Pitch trim — the battery slides fore and aft on rails',
+      },
+      {
+        image: rollTrim,
+        alt: 'Render of the outriggers extending vertically to counter roll',
+        caption: 'Roll trim — the outriggers shift vertically to level the platform',
+      },
+    ],
     dark: true,
     body: [
-      'Instead of relying on hull shape alone, Ligmax keeps itself level mechanically. The 1.8 kWh battery — the heaviest component on board — slides fore and aft on linear rails to trim pitch, while linear actuators in the outriggers adjust the righting moment to counter roll.',
+      'Instead of relying on hull shape alone, Ligmax keeps itself level mechanically. The 1.8 kWh battery — the heaviest component on board — slides fore and aft on linear rails to trim pitch, while linear actuators shift the outriggers vertically to adjust the righting moment and counter roll.',
       'A gimbal-stabilised front lidar completes the system, holding its scan plane horizontal regardless of residual hull motion. The result: clean sensor data in waves, efficient planing at speed, and a composed platform for precision docking.',
     ],
   },
   {
     title: 'Layered perception',
     eyebrow: 'Sensing & autonomy',
-    image: sensorCoverage,
-    alt: 'Top-down visualisation of the 360-degree lidar coverage around the vessel',
+    images: [
+      {
+        image: sensorCoverage,
+        alt: 'Top-down visualisation of the 360-degree lidar coverage around the vessel',
+      },
+    ],
     dark: true,
     body: [
       'Two 360° lidars — one gimbal-stabilised at the bow, one aft — give continuous range data on every bearing, while wide-angle cameras add what lidar cannot: colour. Deterministic Euclidean clustering extracts objects from the scans, a probabilistic classifier labels their colour, and a compact convolutional network cross-checks every detection.',
@@ -33,8 +48,12 @@ const features = [
   {
     title: 'Resilient systems & safety',
     eyebrow: 'Engineering for the water',
-    image: batteryPack,
-    alt: 'The 12S12P lithium-ion battery pack during assembly',
+    images: [
+      {
+        image: batteryPack,
+        alt: 'The 12S12P lithium-ion battery pack during assembly',
+      },
+    ],
     dark: false,
     body: [
       'Safety-critical control is deliberately separated from autonomy: a Pixhawk 6C flight controller owns hard-real-time control and failsafes, while a Raspberry Pi 5 and an NVIDIA Jetson Orin Nano Super run planning and perception. All propulsion power routes through a physical emergency-stop safety loop.',
@@ -55,9 +74,10 @@ const evidence = [
     caption: 'CNN buoy detection validated on open water',
   },
   {
-    image: rollTrim,
-    alt: 'Render of the outrigger actuators extending to counter roll',
-    caption: 'Roll-trim outrigger actuators, built and exercised',
+    image: gimbalDrawing,
+    alt: 'Technical drawing of the custom front-lidar gimbal',
+    caption: 'Custom front-lidar gimbal, designed in-house',
+    light: true,
   },
 ];
 ---
@@ -77,12 +97,17 @@ const evidence = [
       {features.map((feature, index) => (
         <article class:list={['feature', { 'feature--flip': index % 2 === 1 }]} data-reveal>
           <div class:list={['feature-media', { 'feature-media--dark': feature.dark }]}>
-            <Image
-              src={feature.image}
-              alt={feature.alt}
-              widths={[480, 720, 960]}
-              sizes="(max-width: 900px) 92vw, 520px"
-            />
+            {feature.images.map((item) => (
+              <figure class="media-figure">
+                <Image
+                  src={item.image}
+                  alt={item.alt}
+                  widths={[480, 720, 960]}
+                  sizes="(max-width: 900px) 92vw, 520px"
+                />
+                {item.caption && <figcaption>{item.caption}</figcaption>}
+              </figure>
+            ))}
           </div>
           <div class="feature-copy">
             <span class="feature-eyebrow">{feature.eyebrow}</span>
@@ -103,7 +128,7 @@ const evidence = [
         {evidence.map((item) => (
           <li>
             <figure>
-              <div class="evidence-media">
+              <div class:list={['evidence-media', { 'evidence-media--light': item.light }]}>
                 <Image
                   src={item.image}
                   alt={item.alt}
@@ -151,6 +176,29 @@ const evidence = [
       radial-gradient(30rem 18rem at 50% 42%, rgba(120, 158, 224, 0.2), transparent 70%),
       linear-gradient(180deg, var(--navy-900), var(--navy-800));
     border-color: var(--navy-800);
+  }
+
+  .feature-media {
+    display: grid;
+  }
+
+  .media-figure {
+    margin: 0;
+  }
+
+  .feature-media--dark .media-figure + .media-figure {
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  .media-figure figcaption {
+    text-align: center;
+    font-size: 0.82rem;
+    color: var(--muted);
+    padding: 0.15rem 1rem 0.8rem;
+  }
+
+  .feature-media--dark .media-figure figcaption {
+    color: #9db8e8;
   }
 
   .feature-media img {
@@ -223,6 +271,15 @@ const evidence = [
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  .evidence-media--light {
+    background: #fff;
+    padding: 1rem;
+  }
+
+  .evidence-media--light img {
+    object-fit: contain;
   }
 
   .evidence-grid figcaption {
