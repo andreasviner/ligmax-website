@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import About from '../components/About.astro';
+import Vessel from '../components/Vessel.astro';
+import Technology from '../components/Technology.astro';
+import Njord from '../components/Njord.astro';
+import Team from '../components/Team.astro';
+import Sponsor from '../components/Sponsor.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Ligmax — Autonomous Surface Vessel Team | NTNU Trondheim"
+  description="Ligmax is a student team from the NTNU Department of Electronic Systems building a roll- and pitch-stabilised autonomous trimaran, competing at Njord — The Autonomous Ship Challenge 2026 in Trondheim."
+>
+  <Header />
+  <main id="main">
+    <Hero />
+    <About />
+    <Vessel />
+    <Technology />
+    <Njord />
+    <Team />
+    <Sponsor />
+  </main>
+  <Footer />
+</BaseLayout>

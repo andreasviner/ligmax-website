@@ -1,0 +1,249 @@
+---
+import { Image } from 'astro:assets';
+import batteryTrim from '../assets/pitch-trim-battery.png';
+import sensorCoverage from '../assets/lidar-coverage.png';
+import batteryPack from '../assets/battery-pack-assembly.jpeg';
+import lidarTest from '../assets/lidar-scan-test.png';
+import buoyDetection from '../assets/buoy-detection.png';
+import rollTrim from '../assets/roll-trim-outriggers.png';
+
+const features = [
+  {
+    title: 'Active stabilisation',
+    eyebrow: 'Headline innovation',
+    image: batteryTrim,
+    alt: 'Cutaway render showing the battery sliding fore and aft inside the main hull',
+    dark: true,
+    body: [
+      'Instead of relying on hull shape alone, Ligmax keeps itself level mechanically. The 1.8 kWh battery — the heaviest component on board — slides fore and aft on linear rails to trim pitch, while linear actuators in the outriggers adjust the righting moment to counter roll.',
+      'A gimbal-stabilised front lidar completes the system, holding its scan plane horizontal regardless of residual hull motion. The result: clean sensor data in waves, efficient planing at speed, and a composed platform for precision docking.',
+    ],
+  },
+  {
+    title: 'Layered perception',
+    eyebrow: 'Sensing & autonomy',
+    image: sensorCoverage,
+    alt: 'Top-down visualisation of the 360-degree lidar coverage around the vessel',
+    dark: true,
+    body: [
+      'Two 360° lidars — one gimbal-stabilised at the bow, one aft — give continuous range data on every bearing, while wide-angle cameras add what lidar cannot: colour. Deterministic Euclidean clustering extracts objects from the scans, a probabilistic classifier labels their colour, and a compact convolutional network cross-checks every detection.',
+      'Geometry from lidar, class from camera, verified by a neural network — detections that are accurate in position and correct in class.',
+    ],
+  },
+  {
+    title: 'Resilient systems & safety',
+    eyebrow: 'Engineering for the water',
+    image: batteryPack,
+    alt: 'The 12S12P lithium-ion battery pack during assembly',
+    dark: false,
+    body: [
+      'Safety-critical control is deliberately separated from autonomy: a Pixhawk 6C flight controller owns hard-real-time control and failsafes, while a Raspberry Pi 5 and an NVIDIA Jetson Orin Nano Super run planning and perception. All propulsion power routes through a physical emergency-stop safety loop.',
+      'The self-built battery lives in a fireproof aluminium-and-steel enclosure with full BMS telemetry, the hull seals with an interlocked powered lid, and three bilge pumps keep the vessel operational even after water ingress. A direct 5G link carries operator video and telemetry, with an independent long-range RC link as backup.',
+    ],
+  },
+];
+
+const evidence = [
+  {
+    image: lidarTest,
+    alt: 'Live 2D lidar scan plotted during workshop testing',
+    caption: 'Live lidar scan during workshop bench testing',
+  },
+  {
+    image: buoyDetection,
+    alt: 'Camera image of a green buoy on open water with a detection bounding box',
+    caption: 'CNN buoy detection validated on open water',
+  },
+  {
+    image: rollTrim,
+    alt: 'Render of the outrigger actuators extending to counter roll',
+    caption: 'Roll-trim outrigger actuators, built and exercised',
+  },
+];
+---
+
+<section class="section" id="technology">
+  <div class="container">
+    <div data-reveal>
+      <span class="eyebrow">Technology</span>
+      <h2 class="section-title">Attacking instability at the source</h2>
+      <p class="section-lead">
+        Most student vessels accept wave motion and try to clean up the data in software. Ligmax holds the
+        boat — and its sensors — level mechanically.
+      </p>
+    </div>
+
+    <div class="features">
+      {features.map((feature, index) => (
+        <article class:list={['feature', { 'feature--flip': index % 2 === 1 }]} data-reveal>
+          <div class:list={['feature-media', { 'feature-media--dark': feature.dark }]}>
+            <Image
+              src={feature.image}
+              alt={feature.alt}
+              widths={[480, 720, 960]}
+              sizes="(max-width: 900px) 92vw, 520px"
+            />
+          </div>
+          <div class="feature-copy">
+            <span class="feature-eyebrow">{feature.eyebrow}</span>
+            <h3>{feature.title}</h3>
+            {feature.body.map((paragraph) => <p>{paragraph}</p>)}
+          </div>
+        </article>
+      ))}
+    </div>
+
+    <div class="evidence" data-reveal>
+      <h3 class="evidence-title">Validated in the lab &mdash; headed for the water</h3>
+      <p class="evidence-lead">
+        Every subsystem has been integrated and bench-tested. Pool trials and full-course testing against
+        real buoys in Trondheim and Oslo complete the campaign ahead of the competition.
+      </p>
+      <ul class="evidence-grid">
+        {evidence.map((item) => (
+          <li>
+            <figure>
+              <div class="evidence-media">
+                <Image
+                  src={item.image}
+                  alt={item.alt}
+                  widths={[420, 640]}
+                  sizes="(max-width: 700px) 92vw, 350px"
+                />
+              </div>
+              <figcaption>{item.caption}</figcaption>
+            </figure>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<style>
+  .features {
+    display: grid;
+    gap: clamp(2.5rem, 6vw, 4.5rem);
+    margin-top: clamp(2.5rem, 5vw, 4rem);
+  }
+
+  .feature {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: clamp(1.5rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+
+  .feature--flip .feature-media {
+    order: 2;
+  }
+
+  .feature-media {
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    background: var(--bg-soft);
+  }
+
+  .feature-media--dark {
+    background:
+      radial-gradient(30rem 18rem at 50% 42%, rgba(120, 158, 224, 0.2), transparent 70%),
+      linear-gradient(180deg, var(--navy-900), var(--navy-800));
+    border-color: var(--navy-800);
+  }
+
+  .feature-media img {
+    width: 100%;
+    height: auto;
+  }
+
+  .feature-eyebrow {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--blue);
+    margin-bottom: 0.5rem;
+  }
+
+  .feature-copy h3 {
+    font-size: 1.45rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .feature-copy p {
+    font-size: 1.01rem;
+  }
+
+  .feature-copy p:last-child {
+    margin-bottom: 0;
+  }
+
+  .evidence {
+    margin-top: clamp(3rem, 7vw, 5rem);
+    padding-top: clamp(2.5rem, 5vw, 3.5rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .evidence-title {
+    font-size: 1.3rem;
+  }
+
+  .evidence-lead {
+    max-width: 62ch;
+    color: var(--body);
+  }
+
+  .evidence-grid {
+    list-style: none;
+    margin: 1.8rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .evidence-grid figure {
+    margin: 0;
+  }
+
+  .evidence-media {
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--line);
+    overflow: hidden;
+    background: linear-gradient(180deg, var(--navy-900), var(--navy-800));
+    aspect-ratio: 4 / 3;
+    display: grid;
+    place-items: center;
+  }
+
+  .evidence-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .evidence-grid figcaption {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin-top: 0.6rem;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 900px) {
+    .feature {
+      grid-template-columns: 1fr;
+    }
+
+    .feature--flip .feature-media {
+      order: 0;
+    }
+
+    .evidence-grid {
+      grid-template-columns: 1fr;
+      max-width: 26rem;
+    }
+  }
+</style>

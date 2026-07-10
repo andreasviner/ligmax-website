@@ -1,0 +1,179 @@
+---
+import { getImage } from 'astro:assets';
+import fullRender from '../assets/vessel-render.png';
+
+const poster = await getImage({ src: fullRender, width: 1100, format: 'webp' });
+
+const specs = [
+  { name: 'Configuration', value: 'Roll- and pitch-stabilised trimaran' },
+  { name: 'Dimensions (L × B × H)', value: '1126 × 1252 × 478 mm' },
+  { name: 'Structure', value: '3D-printed PLA, carbon-fibre and epoxy skin' },
+  { name: 'Propulsion', value: '2× 2.5 kW brushless thrusters + lateral stern thruster' },
+  { name: 'Steering', value: 'Differential thrust — no rudder' },
+  { name: 'Energy', value: '12S12P Li-ion pack, 44.4 V · 1.8 kWh, 150 A BMS' },
+  { name: 'Sensing', value: '2× 360° lidar, 2× 220° cameras, sonar, GNSS/compass, IMUs' },
+  { name: 'Compute', value: 'NVIDIA Jetson Orin Nano Super · Raspberry Pi 5 · Pixhawk 6C' },
+  { name: 'Communications', value: 'Direct low-latency 5G link + long-range RC fallback' },
+];
+---
+
+<section class="section section--soft" id="vessel">
+  <div class="container">
+    <div class="vessel-head" data-reveal>
+      <span class="eyebrow">The vessel</span>
+      <h2 class="section-title">A stabilised trimaran, engineered end to end</h2>
+      <p class="section-lead">
+        A slender central hull carries propulsion, power and compute, while two outriggers provide a wide,
+        stable stance. The platform actively counteracts wave motion, keeping its sensors level for clean
+        perception data and efficient planing.
+      </p>
+    </div>
+
+    <div class="vessel-grid">
+      <div class="viewer-card" data-reveal>
+        <model-viewer
+          src="/models/ligmax.glb"
+          poster={poster.src}
+          alt="Interactive 3D model of the Ligmax autonomous trimaran"
+          camera-controls
+          auto-rotate
+          auto-rotate-delay="1200"
+          rotation-per-second="16deg"
+          shadow-intensity="0.85"
+          shadow-softness="0.9"
+          exposure="1.05"
+          camera-orbit="-30deg 76deg 105%"
+          max-camera-orbit="auto 92deg auto"
+          interaction-prompt="when-focused"
+          loading="lazy"
+        >
+        </model-viewer>
+        <p class="viewer-hint" aria-hidden="true">Interactive 3D model &mdash; drag to rotate, scroll to zoom</p>
+      </div>
+
+      <div class="spec-card" data-reveal>
+        <h3>Technical specifications</h3>
+        <dl class="spec-list">
+          {specs.map((spec) => (
+            <div class="spec-row">
+              <dt>{spec.name}</dt>
+              <dd>{spec.value}</dd>
+            </div>
+          ))}
+        </dl>
+        <a class="report-link" href="/docs/ligmax-technical-report-2026.pdf" target="_blank" rel="noopener">
+          Read the full technical report (PDF)
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M7 17L17 7M9 7h8v8" />
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  import '@google/model-viewer';
+</script>
+
+<style>
+  .vessel-head {
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .vessel-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    gap: clamp(1.25rem, 3vw, 2rem);
+    align-items: stretch;
+  }
+
+  .viewer-card {
+    background: linear-gradient(180deg, #fdfdfe 0%, #eef2f9 100%);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  model-viewer {
+    width: 100%;
+    flex: 1;
+    min-height: 26rem;
+    border-radius: calc(var(--radius) - 4px);
+    background: transparent;
+    --poster-color: transparent;
+    --progress-bar-color: var(--brand-500);
+  }
+
+  .viewer-hint {
+    margin: 0.55rem 0 0.25rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .spec-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: clamp(1.4rem, 3vw, 2rem);
+  }
+
+  .spec-card h3 {
+    font-size: 1.12rem;
+    margin-bottom: 1.1rem;
+  }
+
+  .spec-list {
+    margin: 0;
+  }
+
+  .spec-row {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 1rem;
+    padding: 0.62rem 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .spec-row:last-child {
+    border-bottom: 0;
+  }
+
+  .spec-row dt {
+    font-size: 0.86rem;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.01em;
+  }
+
+  .spec-row dd {
+    margin: 0;
+    font-size: 0.93rem;
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .report-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    margin-top: 1.2rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 980px) {
+    .vessel-grid {
+      grid-template-columns: 1fr;
+    }
+
+    model-viewer {
+      min-height: 21rem;
+    }
+  }
+</style>

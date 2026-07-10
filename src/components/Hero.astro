@@ -1,0 +1,174 @@
+---
+import { Image } from 'astro:assets';
+import fullRender from '../assets/vessel-render.png';
+
+const stats = [
+  { value: '≈5 kW', label: 'Combined thrust' },
+  { value: '1.8 kWh', label: 'Li-ion energy store' },
+  { value: '360°', label: 'Lidar coverage' },
+  { value: '3 hulls', label: 'Actively stabilised' },
+];
+---
+
+<section class="hero" id="top">
+  <div class="container hero-grid">
+    <div class="hero-copy">
+      <p class="hero-eyebrow">NTNU Trondheim &middot; Autonomous Surface Vessel Team</p>
+      <h1>Student&#8209;built. Self&#8209;stabilising. Fully&nbsp;autonomous.</h1>
+      <p class="hero-lead">
+        Ligmax is a student team from the NTNU Department of Electronic Systems building a
+        roll- and pitch-stabilised autonomous trimaran &mdash; making its competitive debut at
+        Njord, the Autonomous Ship Challenge, in August 2026.
+      </p>
+      <div class="hero-actions">
+        <a class="btn btn--light" href="#vessel">Explore the vessel</a>
+        <a class="btn btn--ghost" href="#contact">Partner with us</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <Image
+        src={fullRender}
+        alt="CAD render of the Ligmax autonomous trimaran in carbon fibre"
+        widths={[520, 760, 1080]}
+        sizes="(max-width: 900px) 92vw, 620px"
+        loading="eager"
+        fetchpriority="high"
+      />
+    </div>
+  </div>
+
+  <div class="container">
+    <dl class="hero-stats">
+      {stats.map((stat) => (
+        <div class="stat">
+          <dt>{stat.label}</dt>
+          <dd>{stat.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .hero {
+    background:
+      radial-gradient(58rem 30rem at 82% 18%, rgba(79, 127, 206, 0.16), transparent 60%),
+      linear-gradient(180deg, var(--navy-950) 0%, var(--navy-900) 68%, var(--navy-800) 100%);
+    color: #fff;
+    padding-top: clamp(3.5rem, 8vw, 6rem);
+    overflow: hidden;
+    position: relative;
+  }
+
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.035) 1px, transparent 1px);
+    background-size: 52px 52px;
+    mask-image: radial-gradient(70rem 40rem at 70% 0%, #000 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(70rem 40rem at 70% 0%, #000 30%, transparent 75%);
+    pointer-events: none;
+  }
+
+  .hero-grid {
+    position: relative;
+    display: grid;
+    grid-template-columns: minmax(0, 6fr) minmax(0, 5fr);
+    gap: clamp(2rem, 5vw, 4rem);
+    align-items: center;
+  }
+
+  .hero-eyebrow {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: #9db8e8;
+    margin-bottom: 1.1rem;
+  }
+
+  h1 {
+    color: #fff;
+    font-size: clamp(2.2rem, 4.6vw, 3.3rem);
+    margin-bottom: 1rem;
+  }
+
+  .hero-lead {
+    color: #c3cee6;
+    font-size: 1.12rem;
+    max-width: 54ch;
+    margin-bottom: 2rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+  }
+
+  .hero-visual {
+    position: relative;
+  }
+
+  .hero-visual::before {
+    content: '';
+    position: absolute;
+    inset: 8% -6% 4% -6%;
+    background: radial-gradient(closest-side, rgba(120, 158, 224, 0.28), transparent 72%);
+    filter: blur(6px);
+  }
+
+  .hero-visual img {
+    position: relative;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 30px 40px rgba(0, 0, 0, 0.45));
+  }
+
+  .hero-stats {
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    margin: clamp(2.5rem, 6vw, 4rem) 0 0;
+    padding: 1.6rem 0 2.1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+  }
+
+  .stat dt {
+    font-size: 0.82rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #93a5cd;
+    margin-bottom: 0.15rem;
+  }
+
+  .stat dd {
+    margin: 0;
+    font-size: clamp(1.35rem, 2.6vw, 1.8rem);
+    font-weight: 700;
+    color: #fff;
+    letter-spacing: -0.02em;
+  }
+
+  @media (max-width: 900px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hero-visual {
+      order: -1;
+      max-width: 30rem;
+      margin-inline: auto;
+    }
+
+    .hero-stats {
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: 1.5rem;
+    }
+  }
+</style>

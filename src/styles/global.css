@@ -1,0 +1,225 @@
+/* ------------------------------------------------------------------ */
+/*  Ligmax — global styles & design tokens                             */
+/* ------------------------------------------------------------------ */
+
+:root {
+  /* Brand palette (derived from the Ligmax wordmark #203a70) */
+  --navy-950: #0a1128;
+  --navy-900: #0e1834;
+  --navy-800: #16244c;
+  --brand: #203a70;
+  --brand-600: #2b4c92;
+  --brand-500: #3a62b4;
+  --blue: #4f7fce;
+  --blue-soft: #dbe6f6;
+
+  --ink: #101a34;
+  --body: #3d4a66;
+  --muted: #5d6a86;
+  --line: #e3e8f2;
+  --bg: #ffffff;
+  --bg-soft: #f5f7fb;
+
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow-sm: 0 1px 2px rgba(16, 26, 52, 0.05), 0 2px 10px rgba(16, 26, 52, 0.05);
+  --shadow-md: 0 2px 6px rgba(16, 26, 52, 0.06), 0 12px 32px rgba(16, 26, 52, 0.1);
+
+  --font: 'Inter Variable', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--body);
+  background: var(--bg);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+h1, h2, h3, h4 {
+  color: var(--ink);
+  line-height: 1.15;
+  letter-spacing: -0.022em;
+  margin: 0 0 0.6em;
+  font-weight: 700;
+  text-wrap: balance;
+}
+
+p {
+  margin: 0 0 1em;
+}
+
+a {
+  color: var(--brand-600);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand-500);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* Layout ----------------------------------------------------------- */
+
+.container {
+  width: min(1120px, 100% - 3rem);
+  margin-inline: auto;
+}
+
+.section {
+  padding-block: clamp(4rem, 9vw, 6.5rem);
+  scroll-margin-top: 5rem;
+}
+
+.section--soft {
+  background: var(--bg-soft);
+}
+
+/* Section headers --------------------------------------------------- */
+
+.eyebrow {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--brand-500);
+  margin-bottom: 0.9rem;
+}
+
+.section-title {
+  font-size: clamp(1.7rem, 3.4vw, 2.35rem);
+  max-width: 32ch;
+}
+
+.section-lead {
+  font-size: 1.08rem;
+  max-width: 62ch;
+  color: var(--body);
+}
+
+/* Buttons ------------------------------------------------------------ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.78rem 1.5rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid transparent;
+  font-weight: 600;
+  font-size: 0.98rem;
+  line-height: 1.2;
+  cursor: pointer;
+  transition: background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease, transform 0.18s ease;
+}
+
+.btn:hover {
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.btn--primary {
+  background: var(--brand);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: var(--brand-600);
+}
+
+.btn--outline {
+  border-color: var(--line);
+  color: var(--ink);
+  background: #fff;
+}
+
+.btn--outline:hover {
+  border-color: var(--brand-500);
+  color: var(--brand-600);
+}
+
+.btn--light {
+  background: #fff;
+  color: var(--brand);
+}
+
+.btn--light:hover {
+  background: var(--blue-soft);
+}
+
+.btn--ghost {
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+}
+
+.btn--ghost:hover {
+  border-color: #fff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Reveal-on-scroll (subtle) ----------------------------------------- */
+
+html.js [data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+html.js [data-reveal].is-revealed {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  html.js [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* Skip link ---------------------------------------------------------- */
+
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  background: var(--brand);
+  color: #fff;
+  padding: 0.6rem 1rem;
+  border-radius: 0 0 var(--radius-sm) 0;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  left: 0;
+}

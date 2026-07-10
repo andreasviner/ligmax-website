@@ -1,0 +1,115 @@
+---
+import { Image } from 'astro:assets';
+import andreasPhoto from '../assets/andreas_lindeman.jpg';
+import jacobPhoto from '../assets/jacob_hansson.jpg';
+
+const members = [
+  {
+    name: 'Andreas Lindeman',
+    role: 'Co-team lead',
+    photo: andreasPhoto,
+    alt: 'Portrait of Andreas Lindeman',
+  },
+  {
+    name: 'Jacob Hansson',
+    role: 'Co-team lead',
+    photo: jacobPhoto,
+    alt: 'Portrait of Jacob Hansson',
+  },
+];
+---
+
+<section class="section" id="team">
+  <div class="container">
+    <div class="team-head" data-reveal>
+      <span class="eyebrow">The team</span>
+      <h2 class="section-title">Jointly led, jointly built</h2>
+      <p class="section-lead">
+        Ligmax is led and engineered by its two members — students at the NTNU Department of Electronic
+        Systems who share responsibility for every subsystem, from hull lamination to autonomy software.
+      </p>
+      <p class="team-note">Members listed in alphabetical order.</p>
+    </div>
+
+    <ul class="team-grid">
+      {members.map((member) => (
+        <li class="member-card" data-reveal>
+          <div class="member-photo">
+            <Image
+              src={member.photo}
+              alt={member.alt}
+              width={640}
+              height={640}
+              sizes="(max-width: 700px) 84vw, 320px"
+            />
+          </div>
+          <h3>{member.name}</h3>
+          <p>{member.role}</p>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .team-head {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .team-note {
+    font-size: 0.88rem;
+    color: var(--muted);
+    font-style: italic;
+    margin-top: 0.2rem;
+  }
+
+  .team-grid {
+    list-style: none;
+    padding: 0;
+    margin: clamp(2rem, 4vw, 3rem) auto 0;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 17rem));
+    gap: clamp(1.5rem, 4vw, 2.5rem);
+    justify-content: center;
+  }
+
+  .member-card {
+    text-align: center;
+  }
+
+  .member-photo {
+    border-radius: var(--radius);
+    overflow: hidden;
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+    aspect-ratio: 1;
+    background: var(--bg-soft);
+  }
+
+  .member-photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: grayscale(1);
+  }
+
+  .member-card h3 {
+    font-size: 1.12rem;
+    margin: 1rem 0 0.1rem;
+  }
+
+  .member-card p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.95rem;
+  }
+
+  @media (max-width: 700px) {
+    .team-grid {
+      grid-template-columns: minmax(0, 17rem);
+    }
+  }
+</style>

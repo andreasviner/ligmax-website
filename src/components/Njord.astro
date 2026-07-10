@@ -1,0 +1,106 @@
+---
+const facts = [
+  {
+    heading: 'When',
+    title: '10–14 August 2026',
+    body: 'Five days of qualification runs, open demo days and finals on Trondheim’s harbour front.',
+  },
+  {
+    heading: 'Where',
+    title: 'Trondheim, Norway',
+    body: 'Raced on the Trondheimsfjord — the world’s first designated test area for autonomous vessels.',
+  },
+  {
+    heading: 'The tasks',
+    title: 'Fully unmanned operations',
+    body: 'Autonomous navigation, collision avoidance and precision docking, performed without human intervention.',
+  },
+];
+---
+
+<section class="section section--soft" id="njord">
+  <div class="container">
+    <div class="njord-head" data-reveal>
+      <span class="eyebrow">First stop &middot; Njord 2026</span>
+      <h2 class="section-title">The Autonomous Ship Challenge</h2>
+      <p class="section-lead">
+        Njord is the international student competition for autonomous surface vessels, hosted annually in
+        Trondheim by students at NTNU. Teams from around the world design, build and operate their vessels
+        through a series of maritime tasks — judged on autonomy, engineering quality and design. It is the
+        first competition Ligmax enters, with more national and international challenges to follow.
+      </p>
+    </div>
+
+    <div class="njord-cards">
+      {facts.map((fact) => (
+        <article class="njord-card" data-reveal>
+          <span class="njord-card-heading">{fact.heading}</span>
+          <h3>{fact.title}</h3>
+          <p>{fact.body}</p>
+        </article>
+      ))}
+    </div>
+
+    <p class="njord-link" data-reveal>
+      Learn more about the competition at
+      <a href="https://www.njordchallenge.com/" target="_blank" rel="noopener">njordchallenge.com</a>
+    </p>
+  </div>
+</section>
+
+<style>
+  .njord-head {
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .njord-cards {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .njord-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 1.7rem 1.6rem 1.5rem;
+    border-top: 3px solid var(--brand);
+  }
+
+  .njord-card-heading {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.55rem;
+  }
+
+  .njord-card h3 {
+    font-size: 1.18rem;
+    margin-bottom: 0.45rem;
+  }
+
+  .njord-card p {
+    margin: 0;
+    font-size: 0.97rem;
+  }
+
+  .njord-link {
+    margin: 2rem 0 0;
+    font-size: 0.98rem;
+    color: var(--muted);
+  }
+
+  .njord-link a {
+    font-weight: 600;
+  }
+
+  @media (max-width: 860px) {
+    .njord-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
