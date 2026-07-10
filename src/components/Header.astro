@@ -2,16 +2,17 @@
 import logo from '../assets/ligmax-logo.svg';
 
 const links = [
-  { href: '#vessel', label: 'The Vessel' },
-  { href: '#technology', label: 'Technology' },
-  { href: '#njord', label: 'Njord 2026' },
-  { href: '#team', label: 'Team' },
+  { href: '/#vessel', label: 'The Vessel' },
+  { href: '/vessel', label: '3D Explorer' },
+  { href: '/#technology', label: 'Technology' },
+  { href: '/#njord', label: 'Njord 2026' },
+  { href: '/#team', label: 'Team' },
 ];
 ---
 
 <header class="site-header">
   <div class="container header-inner">
-    <a href="#top" class="brand" aria-label="Ligmax — home">
+    <a href="/" class="brand" aria-label="Ligmax — home">
       <img src={logo.src} alt="Ligmax" width="132" height="65" />
     </a>
 
@@ -28,7 +29,7 @@ const links = [
         {links.map((link) => (
           <li><a href={link.href}>{link.label}</a></li>
         ))}
-        <li class="nav-cta"><a class="btn btn--primary" href="#contact">Partner with us</a></li>
+        <li class="nav-cta"><a class="btn btn--primary" href="/#contact">Partner with us</a></li>
       </ul>
     </nav>
   </div>

@@ -1,0 +1,419 @@
+---
+---
+
+<div class="explorer" data-reveal>
+  <div class="stage-card">
+    <div class="stage" id="stage">
+      <canvas id="explorer-canvas"></canvas>
+      <div class="stage-overlay" id="stage-status">Loading model&hellip;</div>
+      <button class="stage-reset" id="reset-view" type="button" title="Reset view">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M3 12a9 9 0 1 0 3-6.7" />
+          <path d="M3 4v5h5" />
+        </svg>
+        Reset view
+      </button>
+    </div>
+    <p class="stage-hint" aria-hidden="true">Drag to rotate &middot; scroll to zoom &middot; click a part to identify it</p>
+  </div>
+
+  <aside class="panel">
+    <span class="panel-eyebrow">Part inspector</span>
+    <h2 class="panel-title" id="part-title">No part selected</h2>
+    <p class="panel-id"><span>Part ID:</span> <code id="part-id">&mdash;</code></p>
+    <p class="panel-description" id="part-description">
+      Click any component of the vessel — or pick one from the list below — to identify it. Detailed
+      write-ups for each part are being added.
+    </p>
+
+    <div class="panel-divider"></div>
+
+    <h3 class="panel-list-heading">All parts <span id="part-count"></span></h3>
+    <ul class="part-list" id="part-list"></ul>
+  </aside>
+</div>
+
+<script>
+  import * as THREE from 'three';
+  import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+  import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+  import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+  import partInfo from '../data/part-info.json';
+
+  const FALLBACK_TEXT =
+    'Write-up coming soon — this part has been catalogued and a detailed description is on its way.';
+
+  const stage = document.getElementById('stage');
+  const canvas = document.getElementById('explorer-canvas');
+  const statusEl = document.getElementById('stage-status');
+  const resetBtn = document.getElementById('reset-view');
+  const titleEl = document.getElementById('part-title');
+  const idEl = document.getElementById('part-id');
+  const descriptionEl = document.getElementById('part-description');
+  const listEl = document.getElementById('part-list');
+  const countEl = document.getElementById('part-count');
+
+  if (stage && canvas) {
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+
+    const scene = new THREE.Scene();
+    const pmrem = new THREE.PMREMGenerator(renderer);
+    scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+
+    const camera = new THREE.PerspectiveCamera(30, 1, 0.01, 100);
+    const controls = new OrbitControls(camera, canvas);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.08;
+
+    const hemi = new THREE.HemisphereLight(0xffffff, 0xdfe5f0, 0.5);
+    scene.add(hemi);
+
+    /** @type {THREE.Mesh[]} */
+    const parts = [];
+    let selected = null;
+
+    const prettify = (name) => {
+      const info = partInfo[name];
+      return info && info.title ? info.title : name;
+    };
+
+    const describe = (name) => {
+      const info = partInfo[name];
+      return info && info.description ? info.description : FALLBACK_TEXT;
+    };
+
+    const updatePanel = (mesh) => {
+      if (!mesh) {
+        titleEl.textContent = 'No part selected';
+        idEl.textContent = '—';
+        descriptionEl.textContent =
+          'Click any component of the vessel — or pick one from the list below — to identify it.';
+      } else {
+        titleEl.textContent = prettify(mesh.name);
+        idEl.textContent = mesh.name;
+        descriptionEl.textContent = describe(mesh.name);
+      }
+      listEl.querySelectorAll('button').forEach((button) => {
+        button.classList.toggle('is-active', !!mesh && button.dataset.name === mesh.name);
+      });
+    };
+
+    const selectPart = (mesh) => {
+      if (selected) {
+        selected.material = selected.userData.originalMaterial;
+        selected = null;
+      }
+      if (mesh) {
+        selected = mesh;
+        const highlight = mesh.userData.originalMaterial.clone();
+        if ('emissive' in highlight) {
+          highlight.emissive = new THREE.Color(0x2b4c92);
+          highlight.emissiveIntensity = 0.85;
+        }
+        mesh.material = highlight;
+      }
+      updatePanel(mesh);
+    };
+
+    const loader = new GLTFLoader();
+    loader.load(
+      '/models/ligmax.glb',
+      (gltf) => {
+        const root = gltf.scene;
+
+        // Centre the model on the origin
+        const box = new THREE.Box3().setFromObject(root);
+        const center = box.getCenter(new THREE.Vector3());
+        const size = box.getSize(new THREE.Vector3());
+        root.position.sub(center);
+        scene.add(root);
+
+        root.traverse((object) => {
+          if (object.isMesh) {
+            object.userData.originalMaterial = object.material;
+            parts.push(object);
+          }
+        });
+
+        // Frame the camera
+        const maxDim = Math.max(size.x, size.y, size.z);
+        const distance = (maxDim / (2 * Math.tan((camera.fov * Math.PI) / 360))) * 1.25;
+        camera.position.setFromSphericalCoords(
+          distance,
+          THREE.MathUtils.degToRad(68),
+          THREE.MathUtils.degToRad(-38)
+        );
+        camera.near = distance / 100;
+        camera.far = distance * 20;
+        camera.updateProjectionMatrix();
+        controls.minDistance = distance * 0.35;
+        controls.maxDistance = distance * 3;
+        controls.saveState();
+
+        // Build the parts list, alphabetically
+        const sorted = [...parts].sort((a, b) => a.name.localeCompare(b.name, 'en'));
+        countEl.textContent = `(${sorted.length})`;
+        for (const mesh of sorted) {
+          const li = document.createElement('li');
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.dataset.name = mesh.name;
+          button.textContent = prettify(mesh.name);
+          button.addEventListener('click', () => selectPart(selected === mesh ? null : mesh));
+          li.appendChild(button);
+          listEl.appendChild(li);
+        }
+
+        statusEl.remove();
+      },
+      undefined,
+      () => {
+        statusEl.textContent = 'The 3D model could not be loaded.';
+      }
+    );
+
+    // Picking — only when the pointer has not been dragged
+    const raycaster = new THREE.Raycaster();
+    const pointer = new THREE.Vector2();
+    let downX = 0;
+    let downY = 0;
+
+    const pick = (event) => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+      pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+      raycaster.setFromCamera(pointer, camera);
+      const hit = raycaster.intersectObjects(parts, false)[0];
+      return hit ? hit.object : null;
+    };
+
+    canvas.addEventListener('pointerdown', (event) => {
+      downX = event.clientX;
+      downY = event.clientY;
+    });
+
+    canvas.addEventListener('pointerup', (event) => {
+      if (Math.hypot(event.clientX - downX, event.clientY - downY) > 6) return;
+      const mesh = pick(event);
+      selectPart(mesh === selected ? null : mesh);
+    });
+
+    canvas.addEventListener('pointermove', (event) => {
+      if (event.buttons) return;
+      canvas.style.cursor = pick(event) ? 'pointer' : 'grab';
+    });
+
+    resetBtn?.addEventListener('click', () => controls.reset());
+
+    // Sizing
+    const resize = () => {
+      const width = stage.clientWidth;
+      const height = stage.clientHeight;
+      renderer.setSize(width, height, false);
+      camera.aspect = width / height;
+      camera.updateProjectionMatrix();
+    };
+    new ResizeObserver(resize).observe(stage);
+    resize();
+
+    renderer.setAnimationLoop(() => {
+      controls.update();
+      renderer.render(scene, camera);
+    });
+  }
+</script>
+
+<style>
+  .explorer {
+    display: grid;
+    grid-template-columns: minmax(0, 8fr) minmax(0, 4fr);
+    gap: clamp(1.25rem, 3vw, 2rem);
+    align-items: stretch;
+  }
+
+  .stage-card {
+    background: linear-gradient(180deg, #fdfdfe 0%, #e9eef7 100%);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stage {
+    position: relative;
+    flex: 1;
+    min-height: clamp(24rem, 62vh, 40rem);
+    border-radius: calc(var(--radius) - 4px);
+    overflow: hidden;
+  }
+
+  .stage canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    touch-action: none;
+    cursor: grab;
+  }
+
+  .stage-overlay {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    font-size: 0.95rem;
+    color: var(--muted);
+    background: transparent;
+    pointer-events: none;
+  }
+
+  .stage-reset {
+    position: absolute;
+    top: 0.9rem;
+    right: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.45rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .stage-reset:hover {
+    border-color: var(--brand-500);
+    color: var(--brand-600);
+  }
+
+  .stage-hint {
+    margin: 0.55rem 0 0.25rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .panel {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: clamp(1.4rem, 3vw, 1.9rem);
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  .panel-eyebrow {
+    font-size: 0.76rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--brand-500);
+  }
+
+  .panel-title {
+    font-size: 1.35rem;
+    margin: 0.5rem 0 0.4rem;
+    overflow-wrap: anywhere;
+  }
+
+  .panel-id {
+    margin: 0 0 0.9rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .panel-id code {
+    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
+    font-size: 0.84rem;
+    background: var(--bg-soft);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 0.1rem 0.45rem;
+    color: var(--brand-600);
+    overflow-wrap: anywhere;
+  }
+
+  .panel-description {
+    font-size: 0.96rem;
+    margin: 0;
+  }
+
+  .panel-divider {
+    height: 1px;
+    background: var(--line);
+    margin: 1.3rem 0 1.1rem;
+  }
+
+  .panel-list-heading {
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 0.7rem;
+  }
+
+  .part-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.15rem;
+    overflow-y: auto;
+    flex: 1;
+    min-height: 12rem;
+    max-height: 24rem;
+    display: grid;
+    gap: 0.3rem;
+    align-content: start;
+    scrollbar-width: thin;
+  }
+
+  .part-list button {
+    width: 100%;
+    text-align: left;
+    font: inherit;
+    font-size: 0.9rem;
+    color: var(--body);
+    background: none;
+    border: 1px solid transparent;
+    border-radius: 7px;
+    padding: 0.42rem 0.7rem;
+    cursor: pointer;
+    overflow-wrap: anywhere;
+  }
+
+  .part-list button:hover {
+    background: var(--bg-soft);
+    color: var(--ink);
+  }
+
+  .part-list button.is-active {
+    background: var(--blue-soft);
+    border-color: rgba(58, 98, 180, 0.35);
+    color: var(--brand);
+    font-weight: 600;
+  }
+
+  @media (max-width: 980px) {
+    .explorer {
+      grid-template-columns: 1fr;
+    }
+
+    .stage {
+      min-height: clamp(20rem, 55vh, 30rem);
+    }
+
+    .part-list {
+      max-height: 16rem;
+    }
+  }
+</style>

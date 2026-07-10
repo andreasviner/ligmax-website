@@ -1,0 +1,68 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import VesselExplorer from '../components/VesselExplorer.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<BaseLayout
+  title="Vessel Explorer — Ligmax | Interactive 3D"
+  description="Explore the Ligmax autonomous trimaran in interactive 3D. Rotate the model and click any component — hull, thrusters, sensors and stabilisation systems — to identify it."
+>
+  <Header />
+  <main id="main">
+    <section class="page-intro">
+      <div class="container">
+        <span class="intro-eyebrow">The vessel &middot; Interactive</span>
+        <h1>Vessel explorer</h1>
+        <p>
+          The complete Ligmax trimaran, part by part. Rotate the model and click any component to
+          identify it &mdash; detailed write-ups are being added continuously.
+        </p>
+      </div>
+    </section>
+
+    <section class="section explorer-section">
+      <div class="container">
+        <VesselExplorer />
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .page-intro {
+    background:
+      radial-gradient(44rem 20rem at 78% 0%, rgba(79, 127, 206, 0.16), transparent 62%),
+      linear-gradient(180deg, var(--navy-950), var(--navy-800));
+    color: #c3cee6;
+    padding-block: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .intro-eyebrow {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #9db8e8;
+    margin-bottom: 0.8rem;
+  }
+
+  .page-intro h1 {
+    color: #fff;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    margin-bottom: 0.6rem;
+  }
+
+  .page-intro p {
+    max-width: 60ch;
+    font-size: 1.08rem;
+    margin: 0;
+  }
+
+  .explorer-section {
+    padding-block: clamp(2.5rem, 5vw, 4rem);
+  }
+</style>

@@ -43,7 +43,11 @@ Then add the custom domain in the Pages project settings as above.
 - **Specs** — edit the `specs` array in `src/components/Vessel.astro`.
 - **Team** — edit `src/components/Team.astro` (members are listed in alphabetical order).
 - **Contact email** — set in `src/components/Sponsor.astro` and `src/components/Footer.astro`
-  (currently `contact@ligmax.no`).
+  (currently `andreas.e.lindeman@gmail.com`).
+- **3D explorer part descriptions** — edit `src/data/part-info.json`. Every clickable part of the
+  model has an entry keyed by its part ID (shown in the inspector panel on `/vessel`); fill in
+  `title` (display name) and `description`. Empty fields fall back to the raw ID and a
+  "write-up coming soon" note.
 - **Images** — drop files in `src/assets/` and import them; Astro optimises them at build time.
 - **3D model** — `public/models/ligmax.glb`, Draco-compressed from the CAD export via
   `npx @gltf-transform/cli optimize <in.glb> public/models/ligmax.glb --compress draco --texture-compress webp`.

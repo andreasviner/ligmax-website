@@ -9,12 +9,16 @@ const members = [
     role: 'Co-team lead',
     photo: andreasPhoto,
     alt: 'Portrait of Andreas Lindeman',
+    bio: 'NTNU student working across the full breadth of the project — from hull fabrication and power electronics to perception and autonomy software.',
+    website: 'https://andreaslindeman.com',
+    websiteLabel: 'andreaslindeman.com',
   },
   {
     name: 'Jacob Hansson',
     role: 'Co-team lead',
     photo: jacobPhoto,
     alt: 'Portrait of Jacob Hansson',
+    bio: 'NTNU student equally at home in hardware and software, building everything from the drivetrain and battery systems to the control stack.',
   },
 ];
 ---
@@ -25,8 +29,9 @@ const members = [
       <span class="eyebrow">The team</span>
       <h2 class="section-title">Jointly led, jointly built</h2>
       <p class="section-lead">
-        Ligmax is led and engineered by its two members — students at the NTNU Department of Electronic
-        Systems who share responsibility for every subsystem, from hull lamination to autonomy software.
+        Ligmax is led and engineered by its two members — NTNU students, highly capable across both
+        software and hardware, who share responsibility for every subsystem from hull lamination to
+        autonomy software.
       </p>
       <p class="team-note">Members listed in alphabetical order.</p>
     </div>
@@ -44,7 +49,16 @@ const members = [
             />
           </div>
           <h3>{member.name}</h3>
-          <p>{member.role}</p>
+          <p class="member-role">{member.role}</p>
+          <p class="member-bio">{member.bio}</p>
+          {member.website && (
+            <a class="member-link" href={member.website} target="_blank" rel="noopener">
+              {member.websiteLabel}
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M7 17L17 7M9 7h8v8" />
+              </svg>
+            </a>
+          )}
         </li>
       ))}
     </ul>
@@ -71,7 +85,7 @@ const members = [
     padding: 0;
     margin: clamp(2rem, 4vw, 3rem) auto 0;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 17rem));
+    grid-template-columns: repeat(2, minmax(0, 19rem));
     gap: clamp(1.5rem, 4vw, 2.5rem);
     justify-content: center;
   }
@@ -101,10 +115,26 @@ const members = [
     margin: 1rem 0 0.1rem;
   }
 
-  .member-card p {
+  .member-role {
     margin: 0;
     color: var(--muted);
     font-size: 0.95rem;
+  }
+
+  .member-bio {
+    margin: 0.65rem 0 0;
+    color: var(--body);
+    font-size: 0.93rem;
+    line-height: 1.6;
+  }
+
+  .member-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 0.65rem;
+    font-size: 0.9rem;
+    font-weight: 600;
   }
 
   @media (max-width: 700px) {
