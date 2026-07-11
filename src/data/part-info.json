@@ -5,11 +5,11 @@
   },
   "Body80": {
     "title": "Main lid",
-    "description": "The powered locking lid that seals the central hull. Clinch motors driven by an ESP32 lock it down, a Hall sensor confirms closure before the vessel can arm, and an independent 9 V backup circuit can open it for recovery."
+    "description": "The powered locking lid sealing the central hull, opening onto the electronics bay and the sliding battery. Clinch motors driven by an ESP32 lock it down, a Hall sensor confirms closure before the vessel can arm, and an independent 9 V backup circuit can open it for recovery."
   },
   "Body1.005": {
     "title": "Front lid",
-    "description": "The forward hatch on the main hull, giving access to the bow compartment while keeping the hull sealed on the water."
+    "description": "The forward hatch on the main hull, opened for access to the front lidar gimbal and its drive motors while keeping the bow sealed on the water."
   },
   "Body1.010": {
     "title": "Side hull — right (ama)",
@@ -96,7 +96,10 @@
     "description": "Swing arm of the front-lidar gimbal, articulating the lidar as the stabilisation loop corrects for hull motion."
   },
   "HullMount": { "title": "", "description": "" },
-  "Body1.008": { "title": "", "description": "" },
+  "Body1.008": {
+    "title": "Front lidar",
+    "description": "The forward 360° 2D lidar (Slamtec RPLIDAR), carried in the IMU-driven gimbal that keeps its scan plane level. It is the vessel's primary range sensor for detecting buoys and obstacles ahead."
+  },
   "Body2.001": { "title": "", "description": "" },
   "Body1.001": { "title": "", "description": "" },
   "2Back (1)": { "title": "", "description": "" },

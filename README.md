@@ -46,8 +46,9 @@ Then add the custom domain in the Pages project settings as above.
   (currently `andreas.e.lindeman@gmail.com`).
 - **3D explorer part descriptions** — edit `src/data/part-info.json`. Every mesh in the model has
   an entry keyed by its node name in the GLB; fill in `title` (display name) and `description`.
-  Parts with a title appear in the "Key components" list; parts without one show as a generic
-  "Structural component" when clicked.
+  Untitled parts fall back to a hull-region label or "Structural component" when clicked. The
+  "Highlight a system" groups are defined in the `SYSTEMS` object in
+  `src/components/VesselExplorer.astro`.
 - **Images** — drop files in `src/assets/` and import them; Astro optimises them at build time.
 - **3D model** — `public/models/ligmax.glb`, Draco-compressed from the CAD export via
   `npx @gltf-transform/cli optimize <in.glb> public/models/ligmax.glb --compress draco --texture-compress webp`.

@@ -21,18 +21,13 @@
     <span class="panel-eyebrow">Part inspector</span>
     <h2 class="panel-title" id="part-title">No part selected</h2>
     <p class="panel-description" id="part-description">
-      Click any component of the vessel — or pick one from the list below — to learn what it does.
+      Click any component of the vessel to learn what it does — or highlight a whole system below.
     </p>
 
     <div class="panel-divider"></div>
 
     <h3 class="panel-list-heading">Highlight a system</h3>
     <div class="chip-row" id="chip-row"></div>
-
-    <div class="panel-divider"></div>
-
-    <h3 class="panel-list-heading">Key components <span id="part-count"></span></h3>
-    <ul class="part-list" id="part-list"></ul>
   </aside>
 </div>
 
@@ -48,7 +43,7 @@
     'A structural element of the vessel — the mounts, brackets and fairings that tie the main systems together.';
   const DEFAULT_TITLE = 'No part selected';
   const DEFAULT_TEXT =
-    'Click any component of the vessel — or pick one from the list below — to learn what it does.';
+    'Click any component of the vessel to learn what it does — or highlight a whole system below.';
 
   const SYSTEMS = {
     sensors: {
@@ -59,6 +54,7 @@
         'Sphere',
         'Sphere.001',
         'Body1',
+        'Body1.008',
         'Body1.007',
         'LidarMount',
         'M1',
@@ -80,7 +76,7 @@
       label: 'Lidars',
       description:
         'Both 360° 2D lidars: the gimbal-stabilised unit at the bow and the rear-facing unit aft, together covering every bearing around the vessel.',
-      parts: ['Body1', 'Body1.007', 'LidarMount'],
+      parts: ['Body1', 'Body1.008', 'Body1.007', 'LidarMount'],
     },
     water: {
       label: 'Water-level sensors',
@@ -108,8 +104,6 @@
   const resetBtn = document.getElementById('reset-view');
   const titleEl = document.getElementById('part-title');
   const descriptionEl = document.getElementById('part-description');
-  const listEl = document.getElementById('part-list');
-  const countEl = document.getElementById('part-count');
   const chipRow = document.getElementById('chip-row');
 
   if (stage && canvas) {
@@ -134,22 +128,23 @@
     let selected = [];
     let activeSystem = null;
 
-    const prettify = (name) => {
-      const info = partInfo[name];
-      return info && info.title ? info.title : STRUCTURAL_TITLE;
+    const prettify = (mesh) => {
+      const info = partInfo[mesh.name];
+      if (info && info.title) return info.title;
+      if (mesh.userData.fallback) return mesh.userData.fallback.title;
+      return STRUCTURAL_TITLE;
     };
 
-    const describe = (name) => {
-      const info = partInfo[name];
-      return info && info.description ? info.description : STRUCTURAL_TEXT;
+    const describe = (mesh) => {
+      const info = partInfo[mesh.name];
+      if (info && info.description) return info.description;
+      if (mesh.userData.fallback) return mesh.userData.fallback.description;
+      return STRUCTURAL_TEXT;
     };
 
-    const updatePanel = (title, description, activeNames) => {
+    const updatePanel = (title, description) => {
       titleEl.textContent = title;
       descriptionEl.textContent = description;
-      listEl.querySelectorAll('button').forEach((button) => {
-        button.classList.toggle('is-active', activeNames.has(button.dataset.name));
-      });
       chipRow.querySelectorAll('button').forEach((button) => {
         button.classList.toggle('is-active', button.dataset.key === activeSystem);
       });
@@ -174,7 +169,7 @@
     const selectNone = () => {
       activeSystem = null;
       highlight([]);
-      updatePanel(DEFAULT_TITLE, DEFAULT_TEXT, new Set());
+      updatePanel(DEFAULT_TITLE, DEFAULT_TEXT);
     };
 
     const selectPart = (mesh) => {
@@ -184,7 +179,7 @@
       }
       activeSystem = null;
       highlight([mesh]);
-      updatePanel(prettify(mesh.name), describe(mesh.name), new Set([mesh.name]));
+      updatePanel(prettify(mesh), describe(mesh));
     };
 
     const selectSystem = (key) => {
@@ -195,7 +190,7 @@
       const system = SYSTEMS[key];
       activeSystem = key;
       highlight(parts.filter((mesh) => system.parts.includes(mesh.name)));
-      updatePanel(system.label, system.description, new Set(system.parts));
+      updatePanel(system.label, system.description);
     };
 
     const loader = new GLTFLoader();
@@ -218,6 +213,47 @@
           }
         });
 
+        // Unnamed parts inherit a short label from the hull region they sit in.
+        const REGIONS = [
+          {
+            name: 'Body1.010',
+            title: 'Right side hull — section',
+            description:
+              'Part of the starboard (right) outrigger — one of the two side hulls that give the trimaran its wide, stable stance.',
+          },
+          {
+            name: 'Body1.017',
+            title: 'Left side hull — section',
+            description:
+              'Part of the port (left) outrigger — one of the two side hulls that give the trimaran its wide, stable stance.',
+          },
+          {
+            name: 'Body1.003',
+            title: 'Main hull — section',
+            description:
+              'Part of the central hull, which carries the propulsion system, the sliding battery and the main electronics.',
+          },
+        ];
+        const regionBoxes = [];
+        for (const region of REGIONS) {
+          const regionMesh = parts.find((mesh) => mesh.name === region.name);
+          if (regionMesh) {
+            regionBoxes.push({
+              ...region,
+              box: new THREE.Box3().setFromObject(regionMesh).expandByScalar(0.03),
+            });
+          }
+        }
+        const partCenter = new THREE.Vector3();
+        for (const mesh of parts) {
+          if (partInfo[mesh.name] && partInfo[mesh.name].title) continue;
+          new THREE.Box3().setFromObject(mesh).getCenter(partCenter);
+          const region = regionBoxes.find((r) => r.box.containsPoint(partCenter));
+          if (region) {
+            mesh.userData.fallback = { title: region.title, description: region.description };
+          }
+        }
+
         // Frame the camera
         const maxDim = Math.max(size.x, size.y, size.z);
         const distance = (maxDim / (2 * Math.tan((camera.fov * Math.PI) / 360))) * 1.25;
@@ -232,22 +268,6 @@
         controls.minDistance = distance * 0.35;
         controls.maxDistance = distance * 3;
         controls.saveState();
-
-        // Build the parts list — named components only, alphabetically
-        const sorted = parts
-          .filter((mesh) => partInfo[mesh.name] && partInfo[mesh.name].title)
-          .sort((a, b) => prettify(a.name).localeCompare(prettify(b.name), 'en'));
-        countEl.textContent = `(${sorted.length})`;
-        for (const mesh of sorted) {
-          const li = document.createElement('li');
-          const button = document.createElement('button');
-          button.type = 'button';
-          button.dataset.name = mesh.name;
-          button.textContent = prettify(mesh.name);
-          button.addEventListener('click', () => selectPart(mesh));
-          li.appendChild(button);
-          listEl.appendChild(li);
-        }
 
         // Build the system chips
         for (const [key, system] of Object.entries(SYSTEMS)) {
@@ -401,9 +421,7 @@
     border-radius: var(--radius);
     box-shadow: var(--shadow-sm);
     padding: clamp(1.4rem, 3vw, 1.9rem);
-    display: flex;
-    flex-direction: column;
-    min-height: 0;
+    align-self: start;
   }
 
   .panel-eyebrow {
@@ -470,46 +488,6 @@
     margin: 0 0 0.7rem;
   }
 
-  .part-list {
-    list-style: none;
-    margin: 0;
-    padding: 0.15rem;
-    overflow-y: auto;
-    flex: 1;
-    min-height: 12rem;
-    max-height: 24rem;
-    display: grid;
-    gap: 0.3rem;
-    align-content: start;
-    scrollbar-width: thin;
-  }
-
-  .part-list :global(button) {
-    width: 100%;
-    text-align: left;
-    font: inherit;
-    font-size: 0.9rem;
-    color: var(--body);
-    background: none;
-    border: 1px solid transparent;
-    border-radius: 7px;
-    padding: 0.42rem 0.7rem;
-    cursor: pointer;
-    overflow-wrap: anywhere;
-  }
-
-  .part-list :global(button:hover) {
-    background: var(--bg-soft);
-    color: var(--ink);
-  }
-
-  .part-list :global(button.is-active) {
-    background: var(--blue-soft);
-    border-color: rgba(58, 98, 180, 0.35);
-    color: var(--brand);
-    font-weight: 600;
-  }
-
   @media (max-width: 980px) {
     .explorer {
       grid-template-columns: 1fr;
@@ -517,10 +495,6 @@
 
     .stage {
       min-height: clamp(20rem, 55vh, 30rem);
-    }
-
-    .part-list {
-      max-height: 16rem;
     }
   }
 </style>
