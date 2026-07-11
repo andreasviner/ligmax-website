@@ -88,7 +88,7 @@
       label: 'Propulsion',
       description:
         'The two main thrusters and their propellers, plus the lateral stern thruster used for station-keeping and docking. Differential thrust between the mains steers the vessel.',
-      parts: ['Body72', 'Body73', 'propeller_3', 'propeller_3 (1)', 'Body1.006'],
+      parts: ['Body72', 'Body73', 'propeller_3', 'propeller_3 (1)', 'Body1.006', '2Back (1)', '2Back (2)'],
     },
     rolltrim: {
       label: 'Roll-trim mechanism',
@@ -97,6 +97,13 @@
       parts: ['Body1.013', 'Body1.014', 'Body2.004', 'Body2.005'],
     },
   };
+
+  // three.js sanitises glTF node names on load (spaces -> underscores; . : / [ ] stripped),
+  // so every name comparison goes through the same canonical form, and we prefer the
+  // original glTF name that GLTFLoader preserves in userData.name.
+  const sanitize = (name) => name.replace(/\s/g, '_').replace(/[\[\]\.:\/]/g, '');
+  const infoByCanonical = {};
+  for (const [key, value] of Object.entries(partInfo)) infoByCanonical[sanitize(key)] = value;
 
   const stage = document.getElementById('stage');
   const canvas = document.getElementById('explorer-canvas');
@@ -128,15 +135,18 @@
     let selected = [];
     let activeSystem = null;
 
+    const canonical = (mesh) => sanitize(mesh.userData.name || mesh.name);
+    const infoFor = (mesh) => infoByCanonical[canonical(mesh)];
+
     const prettify = (mesh) => {
-      const info = partInfo[mesh.name];
+      const info = infoFor(mesh);
       if (info && info.title) return info.title;
       if (mesh.userData.fallback) return mesh.userData.fallback.title;
       return STRUCTURAL_TITLE;
     };
 
     const describe = (mesh) => {
-      const info = partInfo[mesh.name];
+      const info = infoFor(mesh);
       if (info && info.description) return info.description;
       if (mesh.userData.fallback) return mesh.userData.fallback.description;
       return STRUCTURAL_TEXT;
@@ -188,8 +198,9 @@
         return;
       }
       const system = SYSTEMS[key];
+      const members = new Set(system.parts.map(sanitize));
       activeSystem = key;
-      highlight(parts.filter((mesh) => system.parts.includes(mesh.name)));
+      highlight(parts.filter((mesh) => members.has(canonical(mesh))));
       updatePanel(system.label, system.description);
     };
 
@@ -236,7 +247,7 @@
         ];
         const regionBoxes = [];
         for (const region of REGIONS) {
-          const regionMesh = parts.find((mesh) => mesh.name === region.name);
+          const regionMesh = parts.find((mesh) => canonical(mesh) === sanitize(region.name));
           if (regionMesh) {
             regionBoxes.push({
               ...region,
@@ -246,7 +257,8 @@
         }
         const partCenter = new THREE.Vector3();
         for (const mesh of parts) {
-          if (partInfo[mesh.name] && partInfo[mesh.name].title) continue;
+          const info = infoFor(mesh);
+          if (info && info.title) continue;
           new THREE.Box3().setFromObject(mesh).getCenter(partCenter);
           const region = regionBoxes.find((r) => r.box.containsPoint(partCenter));
           if (region) {
@@ -279,6 +291,28 @@
           button.addEventListener('click', () => selectSystem(key));
           chipRow.appendChild(button);
         }
+
+        // Debug/QA: log every component and how it resolved, and expose it on window.
+        const partTable = parts.map((mesh) => ({
+          gltfName: mesh.userData.name || mesh.name,
+          threeName: mesh.name,
+          title: prettify(mesh),
+          systems: Object.entries(SYSTEMS)
+            .filter(([, system]) => system.parts.some((p) => sanitize(p) === canonical(mesh)))
+            .map(([key]) => key)
+            .join(', '),
+        }));
+        console.table(partTable);
+        window.__ligmax = {
+          parts: partTable,
+          systems: Object.fromEntries(
+            Object.entries(SYSTEMS).map(([key, system]) => {
+              const members = new Set(system.parts.map(sanitize));
+              const resolved = parts.filter((mesh) => members.has(canonical(mesh))).length;
+              return [key, { listed: system.parts.length, resolved }];
+            })
+          ),
+        };
 
         statusEl.remove();
       },

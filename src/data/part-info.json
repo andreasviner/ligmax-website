@@ -102,8 +102,14 @@
   },
   "Body2.001": { "title": "", "description": "" },
   "Body1.001": { "title": "", "description": "" },
-  "2Back (1)": { "title": "", "description": "" },
-  "2Back (2)": { "title": "", "description": "" },
+  "2Back (1)": {
+    "title": "Stern thruster unit (1)",
+    "description": "Part of the lateral stern-thruster unit — the motor-and-propeller assembly at the stern that pushes the vessel sideways for precise docking and station-keeping."
+  },
+  "2Back (2)": {
+    "title": "Stern thruster unit (2)",
+    "description": "Part of the lateral stern-thruster unit — together with the differential main thrusters it gives the vessel fine low-speed control for docking and station-keeping."
+  },
   "Body1.002": { "title": "", "description": "" },
   "Body1.004": { "title": "", "description": "" },
   "Body2": { "title": "", "description": "" },
