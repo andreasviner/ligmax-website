@@ -44,10 +44,10 @@ Then add the custom domain in the Pages project settings as above.
 - **Team** — edit `src/components/Team.astro` (members are listed in alphabetical order).
 - **Contact email** — set in `src/components/Sponsor.astro` and `src/components/Footer.astro`
   (currently `andreas.e.lindeman@gmail.com`).
-- **3D explorer part descriptions** — edit `src/data/part-info.json`. Every clickable part of the
-  model has an entry keyed by its part ID (shown in the inspector panel on `/vessel`); fill in
-  `title` (display name) and `description`. Empty fields fall back to the raw ID and a
-  "write-up coming soon" note.
+- **3D explorer part descriptions** — edit `src/data/part-info.json`. Every mesh in the model has
+  an entry keyed by its node name in the GLB; fill in `title` (display name) and `description`.
+  Parts with a title appear in the "Key components" list; parts without one show as a generic
+  "Structural component" when clicked.
 - **Images** — drop files in `src/assets/` and import them; Astro optimises them at build time.
 - **3D model** — `public/models/ligmax.glb`, Draco-compressed from the CAD export via
   `npx @gltf-transform/cli optimize <in.glb> public/models/ligmax.glb --compress draco --texture-compress webp`.

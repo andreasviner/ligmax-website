@@ -20,15 +20,18 @@
   <aside class="panel">
     <span class="panel-eyebrow">Part inspector</span>
     <h2 class="panel-title" id="part-title">No part selected</h2>
-    <p class="panel-id"><span>Part ID:</span> <code id="part-id">&mdash;</code></p>
     <p class="panel-description" id="part-description">
-      Click any component of the vessel — or pick one from the list below — to identify it. Detailed
-      write-ups for each part are being added.
+      Click any component of the vessel — or pick one from the list below — to learn what it does.
     </p>
 
     <div class="panel-divider"></div>
 
-    <h3 class="panel-list-heading">All parts <span id="part-count"></span></h3>
+    <h3 class="panel-list-heading">Highlight a system</h3>
+    <div class="chip-row" id="chip-row"></div>
+
+    <div class="panel-divider"></div>
+
+    <h3 class="panel-list-heading">Key components <span id="part-count"></span></h3>
     <ul class="part-list" id="part-list"></ul>
   </aside>
 </div>
@@ -40,18 +43,74 @@
   import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
   import partInfo from '../data/part-info.json';
 
-  const FALLBACK_TEXT =
-    'Write-up coming soon — this part has been catalogued and a detailed description is on its way.';
+  const STRUCTURAL_TITLE = 'Structural component';
+  const STRUCTURAL_TEXT =
+    'A structural element of the vessel — the mounts, brackets and fairings that tie the main systems together.';
+  const DEFAULT_TITLE = 'No part selected';
+  const DEFAULT_TEXT =
+    'Click any component of the vessel — or pick one from the list below — to learn what it does.';
+
+  const SYSTEMS = {
+    sensors: {
+      label: 'Sensor package',
+      description:
+        'The complete perception suite — both cameras, front and rear lidars with the stabilising gimbal, the GNSS antenna and the water-level sensors.',
+      parts: [
+        'Sphere',
+        'Sphere.001',
+        'Body1',
+        'Body1.007',
+        'LidarMount',
+        'M1',
+        'M2',
+        'Body1.009',
+        'Gimbaswingarm',
+        'Body5',
+        'Cylinder.001',
+        'Cylinder.002',
+      ],
+    },
+    cameras: {
+      label: 'Cameras',
+      description:
+        'The two 220° wide-angle cameras covering the forward arc. They add what lidar cannot see — colour — classifying detected objects such as red and green channel markers.',
+      parts: ['Sphere', 'Sphere.001'],
+    },
+    lidars: {
+      label: 'Lidars',
+      description:
+        'Both 360° 2D lidars: the gimbal-stabilised unit at the bow and the rear-facing unit aft, together covering every bearing around the vessel.',
+      parts: ['Body1', 'Body1.007', 'LidarMount'],
+    },
+    water: {
+      label: 'Water-level sensors',
+      description:
+        'The ultrasonic water-level detectors, giving the control system continuous buoyancy feedback and early warning of water ingress.',
+      parts: ['Cylinder.001', 'Cylinder.002'],
+    },
+    propulsion: {
+      label: 'Propulsion',
+      description:
+        'The two main thrusters and their propellers, plus the lateral stern thruster used for station-keeping and docking. Differential thrust between the mains steers the vessel.',
+      parts: ['Body72', 'Body73', 'propeller_3', 'propeller_3 (1)', 'Body1.006'],
+    },
+    rolltrim: {
+      label: 'Roll-trim mechanism',
+      description:
+        'The slide mechanisms and extension arms that shift the outriggers vertically, adjusting the righting moment to keep the platform level in waves.',
+      parts: ['Body1.013', 'Body1.014', 'Body2.004', 'Body2.005'],
+    },
+  };
 
   const stage = document.getElementById('stage');
   const canvas = document.getElementById('explorer-canvas');
   const statusEl = document.getElementById('stage-status');
   const resetBtn = document.getElementById('reset-view');
   const titleEl = document.getElementById('part-title');
-  const idEl = document.getElementById('part-id');
   const descriptionEl = document.getElementById('part-description');
   const listEl = document.getElementById('part-list');
   const countEl = document.getElementById('part-count');
+  const chipRow = document.getElementById('chip-row');
 
   if (stage && canvas) {
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -71,31 +130,28 @@
 
     /** @type {THREE.Mesh[]} */
     const parts = [];
-    let selected = null;
+    /** @type {THREE.Mesh[]} */
+    let selected = [];
+    let activeSystem = null;
 
     const prettify = (name) => {
       const info = partInfo[name];
-      return info && info.title ? info.title : name;
+      return info && info.title ? info.title : STRUCTURAL_TITLE;
     };
 
     const describe = (name) => {
       const info = partInfo[name];
-      return info && info.description ? info.description : FALLBACK_TEXT;
+      return info && info.description ? info.description : STRUCTURAL_TEXT;
     };
 
-    const updatePanel = (mesh) => {
-      if (!mesh) {
-        titleEl.textContent = 'No part selected';
-        idEl.textContent = '—';
-        descriptionEl.textContent =
-          'Click any component of the vessel — or pick one from the list below — to identify it.';
-      } else {
-        titleEl.textContent = prettify(mesh.name);
-        idEl.textContent = mesh.name;
-        descriptionEl.textContent = describe(mesh.name);
-      }
+    const updatePanel = (title, description, activeNames) => {
+      titleEl.textContent = title;
+      descriptionEl.textContent = description;
       listEl.querySelectorAll('button').forEach((button) => {
-        button.classList.toggle('is-active', !!mesh && button.dataset.name === mesh.name);
+        button.classList.toggle('is-active', activeNames.has(button.dataset.name));
+      });
+      chipRow.querySelectorAll('button').forEach((button) => {
+        button.classList.toggle('is-active', button.dataset.key === activeSystem);
       });
     };
 
@@ -109,16 +165,37 @@
       roughness: 0.4,
     });
 
+    const highlight = (meshes) => {
+      for (const mesh of selected) mesh.material = mesh.userData.originalMaterial;
+      for (const mesh of meshes) mesh.material = highlightMaterial;
+      selected = meshes;
+    };
+
+    const selectNone = () => {
+      activeSystem = null;
+      highlight([]);
+      updatePanel(DEFAULT_TITLE, DEFAULT_TEXT, new Set());
+    };
+
     const selectPart = (mesh) => {
-      if (selected) {
-        selected.material = selected.userData.originalMaterial;
-        selected = null;
+      if (!mesh || (selected.length === 1 && selected[0] === mesh)) {
+        selectNone();
+        return;
       }
-      if (mesh) {
-        selected = mesh;
-        mesh.material = highlightMaterial;
+      activeSystem = null;
+      highlight([mesh]);
+      updatePanel(prettify(mesh.name), describe(mesh.name), new Set([mesh.name]));
+    };
+
+    const selectSystem = (key) => {
+      if (activeSystem === key) {
+        selectNone();
+        return;
       }
-      updatePanel(mesh);
+      const system = SYSTEMS[key];
+      activeSystem = key;
+      highlight(parts.filter((mesh) => system.parts.includes(mesh.name)));
+      updatePanel(system.label, system.description, new Set(system.parts));
     };
 
     const loader = new GLTFLoader();
@@ -156,8 +233,10 @@
         controls.maxDistance = distance * 3;
         controls.saveState();
 
-        // Build the parts list, alphabetically
-        const sorted = [...parts].sort((a, b) => prettify(a.name).localeCompare(prettify(b.name), 'en'));
+        // Build the parts list — named components only, alphabetically
+        const sorted = parts
+          .filter((mesh) => partInfo[mesh.name] && partInfo[mesh.name].title)
+          .sort((a, b) => prettify(a.name).localeCompare(prettify(b.name), 'en'));
         countEl.textContent = `(${sorted.length})`;
         for (const mesh of sorted) {
           const li = document.createElement('li');
@@ -165,9 +244,20 @@
           button.type = 'button';
           button.dataset.name = mesh.name;
           button.textContent = prettify(mesh.name);
-          button.addEventListener('click', () => selectPart(selected === mesh ? null : mesh));
+          button.addEventListener('click', () => selectPart(mesh));
           li.appendChild(button);
           listEl.appendChild(li);
+        }
+
+        // Build the system chips
+        for (const [key, system] of Object.entries(SYSTEMS)) {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'chip';
+          button.dataset.key = key;
+          button.textContent = system.label;
+          button.addEventListener('click', () => selectSystem(key));
+          chipRow.appendChild(button);
         }
 
         statusEl.remove();
@@ -200,8 +290,7 @@
 
     canvas.addEventListener('pointerup', (event) => {
       if (Math.hypot(event.clientX - downX, event.clientY - downY) > 6) return;
-      const mesh = pick(event);
-      selectPart(mesh === selected ? null : mesh);
+      selectPart(pick(event));
     });
 
     canvas.addEventListener('pointermove', (event) => {
@@ -327,24 +416,7 @@
 
   .panel-title {
     font-size: 1.35rem;
-    margin: 0.5rem 0 0.4rem;
-    overflow-wrap: anywhere;
-  }
-
-  .panel-id {
-    margin: 0 0 0.9rem;
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
-
-  .panel-id code {
-    font-family: ui-monospace, 'Cascadia Code', Consolas, monospace;
-    font-size: 0.84rem;
-    background: var(--bg-soft);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 0.1rem 0.45rem;
-    color: var(--brand-600);
+    margin: 0.5rem 0 0.7rem;
     overflow-wrap: anywhere;
   }
 
@@ -357,6 +429,36 @@
     height: 1px;
     background: var(--line);
     margin: 1.3rem 0 1.1rem;
+  }
+
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .chip-row :global(.chip) {
+    font: inherit;
+    font-size: 0.84rem;
+    font-weight: 600;
+    color: var(--body);
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    padding: 0.36rem 0.85rem;
+    cursor: pointer;
+    transition: border-color 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+  }
+
+  .chip-row :global(.chip:hover) {
+    border-color: var(--brand-500);
+    color: var(--brand-600);
+  }
+
+  .chip-row :global(.chip.is-active) {
+    background: var(--brand);
+    border-color: var(--brand);
+    color: #fff;
   }
 
   .panel-list-heading {
@@ -382,7 +484,7 @@
     scrollbar-width: thin;
   }
 
-  .part-list button {
+  .part-list :global(button) {
     width: 100%;
     text-align: left;
     font: inherit;
@@ -396,12 +498,12 @@
     overflow-wrap: anywhere;
   }
 
-  .part-list button:hover {
+  .part-list :global(button:hover) {
     background: var(--bg-soft);
     color: var(--ink);
   }
 
-  .part-list button.is-active {
+  .part-list :global(button.is-active) {
     background: var(--blue-soft);
     border-color: rgba(58, 98, 180, 0.35);
     color: var(--brand);

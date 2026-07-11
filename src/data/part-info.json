@@ -115,6 +115,12 @@
   "Body2.002": { "title": "", "description": "" },
   "Body47": { "title": "", "description": "" },
   "Body48": { "title": "", "description": "" },
-  "Cylinder.001": { "title": "", "description": "" },
-  "Cylinder.002": { "title": "", "description": "" }
+  "Cylinder.001": {
+    "title": "Water-level sensor (1)",
+    "description": "Ultrasonic water-level detector. It gives the control system continuous feedback on water level and buoyancy, and doubles as an ingress alarm — detected water starts the pumps and puts the vessel in return-to-shore mode."
+  },
+  "Cylinder.002": {
+    "title": "Water-level sensor (2)",
+    "description": "Second ultrasonic water-level detector, mirroring the first unit for redundant water-level and ingress monitoring."
+  }
 }
