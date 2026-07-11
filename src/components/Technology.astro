@@ -41,8 +41,8 @@ const features = [
     ],
     dark: true,
     body: [
-      'Instead of relying on hull shape alone, Ligmax keeps itself level mechanically. The 1.8 kWh battery — the heaviest component on board — slides fore and aft on linear rails, driven by a dual-shaft stepper and belt, moving the centre of mass to trim pitch.',
-      'The battery does double duty as energy store and trim mass, so the stabilisation costs almost no extra weight — and trimming the vessel to the right attitude to plane cuts wetted area and drag at speed.',
+      'Instead of relying on hull shape alone, Ligmax keeps itself level mechanically. The 1.8 kWh battery, the heaviest component on board, slides fore and aft on linear rails, driven by a dual-shaft stepper and belt, moving the centre of mass to trim pitch.',
+      'The battery does double duty as energy store and trim mass, so the stabilisation costs almost no extra weight. Trimming the vessel to the right attitude to plane also cuts wetted area and drag at speed.',
     ],
   },
   {
@@ -56,7 +56,7 @@ const features = [
     ],
     dark: true,
     body: [
-      'Linear actuators shift the outriggers vertically, adjusting the righting moment and the immersion of the main hull to counter roll — augmenting the passive stability of the wide trimaran stance with active control.',
+      'Linear actuators shift the outriggers vertically, adjusting the righting moment and the immersion of the main hull to counter roll, augmenting the passive stability of the wide trimaran stance with active control.',
       'The result is a vessel that stays composed in wake and chop, exactly when precision matters most: docking, station-keeping and threading a buoy channel.',
     ],
   },
@@ -71,8 +71,8 @@ const features = [
     ],
     dark: true,
     body: [
-      'The third loop guards perception directly. The front 360° lidar rides on a compact gimbal designed and built in-house — just over 100 mm across — with its own dedicated IMU for fast, local correction. Whatever pitch and roll remain after the hull-level loops, the gimbal cancels, holding the scan plane horizontal at all times.',
-      'A 2D lidar sees a single slice of the world, so that slice has to be the right one. Keeping it level means buoys stay in view scan after scan instead of vanishing as the bow lifts — recovering the robustness of a far heavier, more expensive 3D sensor rig from an inexpensive 2D unit.',
+      'The third loop guards perception directly. The front 360° lidar rides on a compact gimbal designed and built in-house, just over 100 mm across, with its own dedicated IMU for fast, local correction. Whatever pitch and roll remain after the hull-level loops, the gimbal cancels, holding the scan plane horizontal at all times.',
+      'A 2D lidar sees a single slice of the world, so that slice has to be the right one. Keeping it level means buoys stay in view scan after scan instead of vanishing as the bow lifts. That recovers the robustness of a far heavier, more expensive 3D sensor rig from an inexpensive 2D unit.',
     ],
   },
   {
@@ -86,8 +86,8 @@ const features = [
     ],
     dark: true,
     body: [
-      'Two 360° lidars — one gimbal-stabilised at the bow, one aft — give continuous range data on every bearing. A deterministic Euclidean clustering algorithm groups the scan returns into candidate objects, each with a range, bearing and size: fast, explainable detection with no training data required.',
-      'Deterministic geometry is the backbone of a safety-critical vehicle — every detection can be traced back to the exact points that produced it.',
+      'Two 360° lidars, one gimbal-stabilised at the bow and one aft, give continuous range data on every bearing. A deterministic Euclidean clustering algorithm groups the scan returns into candidate objects, each with a range, bearing and size: fast, explainable detection with no training data required.',
+      'Deterministic geometry is the backbone of a safety-critical vehicle: every detection can be traced back to the exact points that produced it.',
     ],
   },
   {
@@ -101,8 +101,8 @@ const features = [
     ],
     dark: true,
     body: [
-      'Lidar is colour-blind, and the course is not — channel buoys are red and green. Two 220° wide-angle cameras cover the whole forward arc, and a probabilistic classifier projects each lidar detection into the camera frame and samples its colour, labelling objects without a single neural weight.',
-      'As a fallback and cross-check, a YOLO26L detection network runs on dedicated vision hardware — an NVIDIA Jetson Orin Nano Super — finding buoys directly in the image even in difficult light. Geometry from lidar, colour from camera, verified by the network.',
+      'Lidar is colour-blind, and the course is not: channel buoys are red and green. Two 220° wide-angle cameras cover the whole forward arc, and a probabilistic classifier projects each lidar detection into the camera frame and samples its colour, labelling objects without a single neural weight.',
+      'As a fallback and cross-check, a YOLO26L detection network runs on dedicated vision hardware, an NVIDIA Jetson Orin Nano Super, finding buoys directly in the image even in difficult light. Geometry from lidar, colour from camera, verified by the network.',
     ],
   },
   {
@@ -116,8 +116,8 @@ const features = [
     ],
     dark: true,
     body: [
-      'The operator console is custom software, matured on the team’s earlier 5G-controlled UGV project. A UDP hole-punched connection runs directly between vessel and laptop over 5G — no relay, no cloud — for the lowest latency physically achievable, carrying live camera feeds, the lidar world model and full telemetry.',
-      'Picking up a game controller takes over manual control instantly, with no menus in between, and a lightweight web dashboard gives judges and team an at-a-glance view. Kill and hold commands are always one action away — mirrored on an independent long-range RC link in case 5G drops.',
+      'The operator console is custom software, matured on the team’s earlier 5G-controlled UGV project. A UDP hole-punched connection runs directly between vessel and laptop over 5G, with no relay or cloud in between, for the lowest latency physically achievable. It carries live camera feeds, the lidar world model and full telemetry.',
+      'Picking up a game controller takes over manual control instantly, with no menus in between, and a lightweight web dashboard gives judges and team an at-a-glance view. Kill and hold commands are always one action away, mirrored on an independent long-range RC link in case 5G drops.',
     ],
   },
   {
@@ -164,8 +164,8 @@ const evidence = [
       <h2 class="section-title">Attacking instability at the source</h2>
       <p class="section-lead">
         Most student vessels accept wave motion and try to clean up the data in software. Ligmax holds the
-        boat — and its sensors — level mechanically, with three coordinated control loops, each closed
-        around live IMU feedback.
+        boat and its sensors level mechanically, with three coordinated control loops, each closed around
+        live IMU feedback.
       </p>
     </div>
 
@@ -209,7 +209,7 @@ const evidence = [
         <span class="eyebrow">The build</span>
         <h3 class="build-title">Built from parts, not kits</h3>
         <p class="build-lead">
-          Ligmax is not an assembled product — it is 31 numbered line items turned into a vessel. The hull is
+          Ligmax is not an assembled product: it is 31 numbered line items turned into a vessel. The hull is
           3D-printed in sections and hand-laminated in carbon fibre; the 144-cell battery pack is welded
           in-house and enclosed in its own fireproof box; rails, belts, actuators, drivers and compute are
           wired and integrated by the team.
@@ -219,7 +219,7 @@ const evidence = [
     </div>
 
     <div class="evidence" data-reveal>
-      <h3 class="evidence-title">Validated in the lab &mdash; headed for the water</h3>
+      <h3 class="evidence-title">Validated in the lab, headed for the water</h3>
       <p class="evidence-lead">
         Every subsystem has been integrated and bench-tested. Pool trials and full-course testing against
         real buoys in Trondheim and Oslo complete the campaign ahead of the competition.
@@ -466,6 +466,7 @@ const evidence = [
     .evidence-grid {
       grid-template-columns: 1fr;
       max-width: 26rem;
+      margin-inline: auto;
     }
   }
 </style>

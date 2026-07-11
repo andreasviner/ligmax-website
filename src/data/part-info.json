@@ -37,11 +37,11 @@
   },
   "Body72": {
     "title": "Main thruster — right",
-    "description": "The starboard main drive — a Flipsky 5085 brushless outrunner rated around 2.5 kW, commanded by a VESC 6.7 controller over the vehicle CAN bus."
+    "description": "The starboard main drive: a Flipsky 5085 brushless outrunner rated around 2.5 kW, commanded by a VESC 6.7 controller over the vehicle CAN bus."
   },
   "Body73": {
     "title": "Main thruster — left",
-    "description": "The port main drive, identical to its starboard twin. Differential thrust between the pair steers the vessel — no rudder required."
+    "description": "The port main drive, identical to its starboard twin. Differential thrust between the pair steers the vessel, so no rudder is required."
   },
   "propeller_3": {
     "title": "Propeller — right",
@@ -65,7 +65,7 @@
   },
   "Sphere": {
     "title": "Camera — right",
-    "description": "The starboard 220° wide-angle camera. The camera pair adds what lidar cannot see — colour — classifying detected objects such as red and green channel markers."
+    "description": "The starboard 220° wide-angle camera. The camera pair adds the colour that lidar cannot see, classifying detected objects such as red and green channel markers."
   },
   "Sphere.001": {
     "title": "Camera — left",
@@ -89,7 +89,7 @@
   },
   "Body1.007": {
     "title": "Front lidar gimbal",
-    "description": "The IMU-driven gimbal that keeps the front 360° lidar's scan plane horizontal regardless of hull motion — the core of the stabilised sensor package."
+    "description": "The IMU-driven gimbal that keeps the front 360° lidar's scan plane horizontal regardless of hull motion. It is the core of the stabilised sensor package."
   },
   "Gimbaswingarm": {
     "title": "Gimbal swing arm",
@@ -126,7 +126,7 @@
   "Body48": { "title": "", "description": "" },
   "Cylinder.001": {
     "title": "Water-level sensor (1)",
-    "description": "Ultrasonic water-level detector. It gives the control system continuous feedback on water level and buoyancy, and doubles as an ingress alarm — detected water starts the pumps and puts the vessel in return-to-shore mode."
+    "description": "Ultrasonic water-level detector. It gives the control system continuous feedback on water level and buoyancy, and doubles as an ingress alarm: detected water starts the pumps and puts the vessel in return-to-shore mode."
   },
   "Cylinder.002": {
     "title": "Water-level sensor (2)",
