@@ -1,0 +1,238 @@
+---
+import { Image } from 'astro:assets';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import componentsLayout from '../assets/components-layout.jpg';
+
+const components = [
+  { number: '01', name: 'PLA hull components' },
+  { number: '02', name: 'Battery management system (Daly 150 A)' },
+  { number: '03', name: 'Main thrusters (Flipsky 5085)' },
+  { number: '04', name: 'Carbon-fibre cloth' },
+  { number: '05', name: 'Epoxy resin' },
+  { number: '06', name: 'Epoxy hardener' },
+  { number: '07', name: 'Li-ion battery cells (Samsung 35E)' },
+  { number: '08', name: 'Linear actuators (roll trim)' },
+  { number: '09', name: 'Lidars (Slamtec RPLIDAR)' },
+  { number: '10', name: 'Aluminium TIG weld sticks' },
+  { number: '11', name: 'DC-DC buck converter, low voltage' },
+  { number: '12', name: 'DC-DC buck converter, high voltage' },
+  { number: '13', name: 'Battery for system testing' },
+  { number: '14', name: '5G router' },
+  { number: '15', name: 'Pixhawk power distribution board' },
+  { number: '16', name: 'Holybro Pixhawk 6C (flight controller / IMU)' },
+  { number: '17', name: 'VESC 6.7 FOC motor controllers' },
+  { number: '18', name: 'Sonar' },
+  { number: '19', name: 'Lidar gimbal motor' },
+  { number: '20', name: 'IMU vibration-damping mounts' },
+  { number: '21', name: 'Dual-shaft Nema 23 with belt pulleys (battery shift)' },
+  { number: '22', name: 'Idle belt pulleys' },
+  { number: '23', name: 'Screws' },
+  { number: '24', name: 'Pixhawk cables and PWM breakout' },
+  { number: '25', name: 'Gimbal structural part' },
+  { number: '26', name: 'Stepper-motor driver' },
+  { number: '27', name: 'Raspberry Pi 5 (companion computer)' },
+  { number: '28', name: 'GPS antenna (u-blox M9)' },
+  { number: '29', name: 'CAN communication Pi 5 HAT' },
+  { number: '30', name: 'Linear rails (battery shift)' },
+  { number: '31', name: 'Emergency-stop button' },
+];
+---
+
+<BaseLayout
+  title="The Build — Ligmax | Every component, assembled in-house"
+  description="A deeper look at how the Ligmax autonomous trimaran is built: every major component laid out and numbered, from hull sections and battery cells to lidars, actuators and compute."
+>
+  <Header />
+  <main id="main">
+    <section class="page-intro">
+      <div class="container">
+        <span class="intro-eyebrow">The build &middot; Deep dive</span>
+        <h1>Built from parts, not kits</h1>
+        <p>
+          Every subsystem on Ligmax starts as raw material or a bare component. The hull is 3D-printed in
+          sections and hand-laminated in carbon fibre; the 144-cell battery pack is welded in-house and
+          enclosed in its own fireproof box; rails, belts, actuators, drivers and compute are wired and
+          integrated by the team. This is the hardware it all starts from.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <figure class="parts-figure" data-reveal>
+          <Image
+            src={componentsLayout}
+            alt="All major project components laid out and numbered before integration — hull sections, battery cells, thrusters, lidars, actuators, rails and electronics"
+            widths={[720, 1080, 1600, 2200]}
+            sizes="(max-width: 900px) 92vw, 1060px"
+            loading="eager"
+          />
+          <figcaption>
+            The majority of the project hardware, laid out before integration. Each number identifies a
+            component in the legend below.
+          </figcaption>
+        </figure>
+
+        <div class="legend" data-reveal>
+          <h2>Component legend</h2>
+          <ol class="legend-grid">
+            {components.map((item) => (
+              <li>
+                <span class="legend-number">{item.number}</span>
+                <span class="legend-name">{item.name}</span>
+              </li>
+            ))}
+          </ol>
+          <p class="legend-note">
+            Not pictured: stern thruster, 2040 aluminium profile beam, lid locking mechanism, lights, battery
+            aluminium plate, and mounting hardware (belts, bolts, misc.).
+          </p>
+        </div>
+
+        <div class="build-more" data-reveal>
+          <p>
+            Want the full engineering detail — hull geometry, power architecture, control loops and test
+            results?
+          </p>
+          <div class="build-more-actions">
+            <a class="btn btn--primary" href="/docs/ligmax-technical-report-2026.pdf" target="_blank" rel="noopener">
+              Read the technical report (PDF)
+            </a>
+            <a class="btn btn--outline" href="/vessel">Explore the vessel in 3D</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+  <Footer />
+</BaseLayout>
+
+<style>
+  .page-intro {
+    background:
+      radial-gradient(44rem 20rem at 78% 0%, rgba(79, 127, 206, 0.16), transparent 62%),
+      linear-gradient(180deg, var(--navy-950), var(--navy-800));
+    color: #c3cee6;
+    padding-block: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .intro-eyebrow {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #9db8e8;
+    margin-bottom: 0.8rem;
+  }
+
+  .page-intro h1 {
+    color: #fff;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    margin-bottom: 0.6rem;
+  }
+
+  .page-intro p {
+    max-width: 68ch;
+    font-size: 1.08rem;
+    margin: 0;
+  }
+
+  .parts-figure {
+    margin: 0;
+  }
+
+  .parts-figure img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .parts-figure figcaption {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-top: 0.8rem;
+    line-height: 1.5;
+  }
+
+  .legend {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  .legend h2 {
+    font-size: 1.3rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .legend-grid {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.35rem 1.5rem;
+  }
+
+  .legend-grid li {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    padding: 0.42rem 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 0.94rem;
+  }
+
+  .legend-number {
+    flex: none;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 0.06em;
+    color: var(--blue);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .legend-name {
+    color: var(--ink);
+    font-weight: 500;
+  }
+
+  .legend-note {
+    margin: 1.4rem 0 0;
+    font-size: 0.9rem;
+    color: var(--muted);
+    max-width: 72ch;
+  }
+
+  .build-more {
+    margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    padding-top: clamp(2rem, 4vw, 2.5rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .build-more p {
+    max-width: 58ch;
+    color: var(--body);
+  }
+
+  .build-more-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+  }
+
+  @media (max-width: 980px) {
+    .legend-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .legend-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

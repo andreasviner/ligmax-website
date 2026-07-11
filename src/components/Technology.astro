@@ -10,7 +10,6 @@ import rollTrim from '../assets/roll-trim-outriggers.png';
 import gimbalDrawing from '../assets/lidar-gimbal-drawing.png';
 import frontLidarMount from '../assets/front-lidar-mount.png';
 import operatorConsole from '../assets/operator-console.jpg';
-import componentsLayout from '../assets/components-layout.jpg';
 
 const loops = [
   {
@@ -77,24 +76,33 @@ const features = [
     ],
   },
   {
-    title: 'Layered perception',
+    title: 'Object detection, straight from geometry',
     eyebrow: 'Sensing & autonomy',
     images: [
       {
         image: sensorCoverage,
         alt: 'Top-down visualisation of the 360-degree lidar coverage around the vessel',
-        caption: 'Two 360° lidars cover every bearing',
-      },
-      {
-        image: cameraCoverage,
-        alt: 'Visualisation of the usable forward field of view of the two wide-angle cameras',
-        caption: 'Wide-angle cameras cover the forward arc for colour',
       },
     ],
     dark: true,
     body: [
-      'Two 360° lidars — one gimbal-stabilised at the bow, one aft — give continuous range data on every bearing, while wide-angle cameras add what lidar cannot: colour. Deterministic Euclidean clustering extracts objects from the scans, a probabilistic classifier labels their colour, and a compact convolutional network cross-checks every detection.',
-      'Geometry from lidar, class from camera, verified by a neural network — detections that are accurate in position and correct in class.',
+      'Two 360° lidars — one gimbal-stabilised at the bow, one aft — give continuous range data on every bearing. A deterministic Euclidean clustering algorithm groups the scan returns into candidate objects, each with a range, bearing and size: fast, explainable detection with no training data required.',
+      'Deterministic geometry is the backbone of a safety-critical vehicle — every detection can be traced back to the exact points that produced it.',
+    ],
+  },
+  {
+    title: 'Cameras add what lidar cannot: colour',
+    eyebrow: 'Sensing & autonomy',
+    images: [
+      {
+        image: cameraCoverage,
+        alt: 'Visualisation of the usable forward field of view of the two wide-angle cameras',
+      },
+    ],
+    dark: true,
+    body: [
+      'Lidar is colour-blind, and the course is not — channel buoys are red and green. Two 220° wide-angle cameras cover the whole forward arc, and a probabilistic classifier projects each lidar detection into the camera frame and samples its colour, labelling objects without a single neural weight.',
+      'As a fallback and cross-check, a YOLO26L detection network runs on dedicated vision hardware — an NVIDIA Jetson Orin Nano Super — finding buoys directly in the image even in difficult light. Geometry from lidar, colour from camera, verified by the network.',
     ],
   },
   {
@@ -206,16 +214,8 @@ const evidence = [
           in-house and enclosed in its own fireproof box; rails, belts, actuators, drivers and compute are
           wired and integrated by the team.
         </p>
+        <a class="btn btn--primary build-cta" href="/build">See every component</a>
       </div>
-      <figure class="build-media">
-        <Image
-          src={componentsLayout}
-          alt="All major project components laid out and numbered before integration — hull sections, battery cells, thrusters, lidars, actuators, rails and electronics"
-          widths={[720, 1080, 1600]}
-          sizes="(max-width: 900px) 92vw, 1060px"
-        />
-        <figcaption>The project hardware laid out before integration — every subsystem assembled by the team.</figcaption>
-      </figure>
     </div>
 
     <div class="evidence" data-reveal>
@@ -386,23 +386,8 @@ const evidence = [
     margin-bottom: 0;
   }
 
-  .build-media {
-    margin: 1.8rem 0 0;
-  }
-
-  .build-media img {
-    width: 100%;
-    height: auto;
-    border-radius: var(--radius);
-    border: 1px solid var(--line);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .build-media figcaption {
-    font-size: 0.88rem;
-    color: var(--muted);
-    margin-top: 0.7rem;
-    line-height: 1.5;
+  .build-cta {
+    margin-top: 1.4rem;
   }
 
   .evidence {
