@@ -10,24 +10,33 @@ import gimbalDrawing from '../assets/lidar-gimbal-drawing.png';
 
 const features = [
   {
-    title: 'Active stabilisation',
+    title: 'Pitch trim by weight shift',
     eyebrow: 'Headline innovation',
     images: [
       {
         image: batteryTrim,
         alt: 'Cutaway render showing the battery sliding fore and aft inside the main hull',
-        caption: 'Pitch trim — the battery slides fore and aft on rails',
-      },
-      {
-        image: rollTrim,
-        alt: 'Render of the outriggers extending vertically to counter roll',
-        caption: 'Roll trim — the outriggers shift vertically to level the platform',
       },
     ],
     dark: true,
     body: [
-      'Instead of relying on hull shape alone, Ligmax keeps itself level mechanically. The 1.8 kWh battery — the heaviest component on board — slides fore and aft on linear rails to trim pitch, while linear actuators shift the outriggers vertically to adjust the righting moment and counter roll.',
-      'A gimbal-stabilised front lidar completes the system, holding its scan plane horizontal regardless of residual hull motion. The result: clean sensor data in waves, efficient planing at speed, and a composed platform for precision docking.',
+      'Instead of relying on hull shape alone, Ligmax keeps itself level mechanically. The 1.8 kWh battery — the heaviest component on board — slides fore and aft on linear rails, moving the centre of mass to trim pitch.',
+      'The battery does double duty as energy store and trim mass, so the stabilisation costs almost no extra weight — and trimming the vessel to the right attitude to plane cuts wetted area and drag at speed.',
+    ],
+  },
+  {
+    title: 'Roll trim by active outriggers',
+    eyebrow: 'Active stabilisation',
+    images: [
+      {
+        image: rollTrim,
+        alt: 'Render of the outriggers shifting vertically to counter roll',
+      },
+    ],
+    dark: true,
+    body: [
+      'Linear actuators shift the outriggers vertically, adjusting the righting moment and the immersion of the main hull to counter roll. A gimbal-stabilised front lidar completes the system, holding its scan plane horizontal regardless of residual hull motion.',
+      'The result: clean sensor data in waves and a composed platform for precision docking and station-keeping.',
     ],
   },
   {
