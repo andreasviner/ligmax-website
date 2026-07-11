@@ -2,16 +2,38 @@
 import { Image } from 'astro:assets';
 import batteryTrim from '../assets/pitch-trim-battery.png';
 import sensorCoverage from '../assets/lidar-coverage.png';
+import cameraCoverage from '../assets/camera-coverage.png';
 import batteryPack from '../assets/battery-pack-assembly.jpeg';
 import lidarTest from '../assets/lidar-scan-test.png';
 import buoyDetection from '../assets/buoy-detection.png';
 import rollTrim from '../assets/roll-trim-outriggers.png';
 import gimbalDrawing from '../assets/lidar-gimbal-drawing.png';
+import frontLidarMount from '../assets/front-lidar-mount.png';
+import operatorConsole from '../assets/operator-console.jpg';
+import componentsLayout from '../assets/components-layout.jpg';
+
+const loops = [
+  {
+    number: '01',
+    title: 'Pitch',
+    body: 'The 1.8 kWh battery slides fore and aft on rails, shifting the centre of mass.',
+  },
+  {
+    number: '02',
+    title: 'Roll',
+    body: 'Linear actuators in the outriggers adjust the righting moment in real time.',
+  },
+  {
+    number: '03',
+    title: 'Sensors',
+    body: 'A custom-built gimbal holds the front lidar level through any residual motion.',
+  },
+];
 
 const features = [
   {
     title: 'Pitch trim by weight shift',
-    eyebrow: 'Headline innovation',
+    eyebrow: 'Stabilisation · Loop 01',
     images: [
       {
         image: batteryTrim,
@@ -20,13 +42,13 @@ const features = [
     ],
     dark: true,
     body: [
-      'Instead of relying on hull shape alone, Ligmax keeps itself level mechanically. The 1.8 kWh battery — the heaviest component on board — slides fore and aft on linear rails, moving the centre of mass to trim pitch.',
+      'Instead of relying on hull shape alone, Ligmax keeps itself level mechanically. The 1.8 kWh battery — the heaviest component on board — slides fore and aft on linear rails, driven by a dual-shaft stepper and belt, moving the centre of mass to trim pitch.',
       'The battery does double duty as energy store and trim mass, so the stabilisation costs almost no extra weight — and trimming the vessel to the right attitude to plane cuts wetted area and drag at speed.',
     ],
   },
   {
     title: 'Roll trim by active outriggers',
-    eyebrow: 'Active stabilisation',
+    eyebrow: 'Stabilisation · Loop 02',
     images: [
       {
         image: rollTrim,
@@ -35,8 +57,23 @@ const features = [
     ],
     dark: true,
     body: [
-      'Linear actuators shift the outriggers vertically, adjusting the righting moment and the immersion of the main hull to counter roll. A gimbal-stabilised front lidar completes the system, holding its scan plane horizontal regardless of residual hull motion.',
-      'The result: clean sensor data in waves and a composed platform for precision docking and station-keeping.',
+      'Linear actuators shift the outriggers vertically, adjusting the righting moment and the immersion of the main hull to counter roll — augmenting the passive stability of the wide trimaran stance with active control.',
+      'The result is a vessel that stays composed in wake and chop, exactly when precision matters most: docking, station-keeping and threading a buoy channel.',
+    ],
+  },
+  {
+    title: 'A custom gimbal for the front lidar',
+    eyebrow: 'Stabilisation · Loop 03',
+    images: [
+      {
+        image: frontLidarMount,
+        alt: 'Close-up render of the gimbal-stabilised front lidar mounted in the carbon-fibre bow',
+      },
+    ],
+    dark: true,
+    body: [
+      'The third loop guards perception directly. The front 360° lidar rides on a compact gimbal designed and built in-house — just over 100 mm across — with its own dedicated IMU for fast, local correction. Whatever pitch and roll remain after the hull-level loops, the gimbal cancels, holding the scan plane horizontal at all times.',
+      'A 2D lidar sees a single slice of the world, so that slice has to be the right one. Keeping it level means buoys stay in view scan after scan instead of vanishing as the bow lifts — recovering the robustness of a far heavier, more expensive 3D sensor rig from an inexpensive 2D unit.',
     ],
   },
   {
@@ -46,12 +83,33 @@ const features = [
       {
         image: sensorCoverage,
         alt: 'Top-down visualisation of the 360-degree lidar coverage around the vessel',
+        caption: 'Two 360° lidars cover every bearing',
+      },
+      {
+        image: cameraCoverage,
+        alt: 'Visualisation of the usable forward field of view of the two wide-angle cameras',
+        caption: 'Wide-angle cameras cover the forward arc for colour',
       },
     ],
     dark: true,
     body: [
       'Two 360° lidars — one gimbal-stabilised at the bow, one aft — give continuous range data on every bearing, while wide-angle cameras add what lidar cannot: colour. Deterministic Euclidean clustering extracts objects from the scans, a probabilistic classifier labels their colour, and a compact convolutional network cross-checks every detection.',
       'Geometry from lidar, class from camera, verified by a neural network — detections that are accurate in position and correct in class.',
+    ],
+  },
+  {
+    title: 'A ground station built for zero hesitation',
+    eyebrow: 'Operations',
+    images: [
+      {
+        image: operatorConsole,
+        alt: 'The Ligmax operator console showing live camera feed with buoy detection, minimap, lidar world model and safety-critical telemetry',
+      },
+    ],
+    dark: true,
+    body: [
+      'The operator console is custom software, matured on the team’s earlier 5G-controlled UGV project. A UDP hole-punched connection runs directly between vessel and laptop over 5G — no relay, no cloud — for the lowest latency physically achievable, carrying live camera feeds, the lidar world model and full telemetry.',
+      'Picking up a game controller takes over manual control instantly, with no menus in between, and a lightweight web dashboard gives judges and team an at-a-glance view. Kill and hold commands are always one action away — mirrored on an independent long-range RC link in case 5G drops.',
     ],
   },
   {
@@ -98,9 +156,20 @@ const evidence = [
       <h2 class="section-title">Attacking instability at the source</h2>
       <p class="section-lead">
         Most student vessels accept wave motion and try to clean up the data in software. Ligmax holds the
-        boat — and its sensors — level mechanically.
+        boat — and its sensors — level mechanically, with three coordinated control loops, each closed
+        around live IMU feedback.
       </p>
     </div>
+
+    <ul class="loops" data-reveal>
+      {loops.map((loop) => (
+        <li class="loop-card">
+          <span class="loop-number">{loop.number}</span>
+          <h3>{loop.title}</h3>
+          <p>{loop.body}</p>
+        </li>
+      ))}
+    </ul>
 
     <div class="features">
       {features.map((feature, index) => (
@@ -125,6 +194,28 @@ const evidence = [
           </div>
         </article>
       ))}
+    </div>
+
+    <div class="build" data-reveal>
+      <div class="build-head">
+        <span class="eyebrow">The build</span>
+        <h3 class="build-title">Built from parts, not kits</h3>
+        <p class="build-lead">
+          Ligmax is not an assembled product — it is 31 numbered line items turned into a vessel. The hull is
+          3D-printed in sections and hand-laminated in carbon fibre; the 144-cell battery pack is welded
+          in-house and enclosed in its own fireproof box; rails, belts, actuators, drivers and compute are
+          wired and integrated by the team.
+        </p>
+      </div>
+      <figure class="build-media">
+        <Image
+          src={componentsLayout}
+          alt="All major project components laid out and numbered before integration — hull sections, battery cells, thrusters, lidars, actuators, rails and electronics"
+          widths={[720, 1080, 1600]}
+          sizes="(max-width: 900px) 92vw, 1060px"
+        />
+        <figcaption>The project hardware laid out before integration — every subsystem assembled by the team.</figcaption>
+      </figure>
     </div>
 
     <div class="evidence" data-reveal>
@@ -155,6 +246,44 @@ const evidence = [
 </section>
 
 <style>
+  .loops {
+    list-style: none;
+    padding: 0;
+    margin: clamp(2rem, 4vw, 2.8rem) 0 0;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+
+  .loop-card {
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+    padding: 1.4rem 1.5rem 1.3rem;
+    border-top: 3px solid var(--brand);
+  }
+
+  .loop-number {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    color: var(--blue);
+    margin-bottom: 0.4rem;
+  }
+
+  .loop-card h3 {
+    font-size: 1.08rem;
+    margin-bottom: 0.35rem;
+  }
+
+  .loop-card p {
+    margin: 0;
+    font-size: 0.94rem;
+    color: var(--body);
+  }
+
   .features {
     display: grid;
     gap: clamp(2.5rem, 6vw, 4.5rem);
@@ -238,6 +367,44 @@ const evidence = [
     margin-bottom: 0;
   }
 
+  .build {
+    margin-top: clamp(3rem, 7vw, 5rem);
+    padding-top: clamp(2.5rem, 5vw, 3.5rem);
+    border-top: 1px solid var(--line);
+  }
+
+  .build-head {
+    max-width: 62ch;
+  }
+
+  .build-title {
+    font-size: 1.3rem;
+  }
+
+  .build-lead {
+    color: var(--body);
+    margin-bottom: 0;
+  }
+
+  .build-media {
+    margin: 1.8rem 0 0;
+  }
+
+  .build-media img {
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .build-media figcaption {
+    font-size: 0.88rem;
+    color: var(--muted);
+    margin-top: 0.7rem;
+    line-height: 1.5;
+  }
+
   .evidence {
     margin-top: clamp(3rem, 7vw, 5rem);
     padding-top: clamp(2.5rem, 5vw, 3.5rem);
@@ -299,6 +466,10 @@ const evidence = [
   }
 
   @media (max-width: 900px) {
+    .loops {
+      grid-template-columns: 1fr;
+    }
+
     .feature {
       grid-template-columns: 1fr;
     }
