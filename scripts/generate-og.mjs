@@ -1,5 +1,6 @@
 // Generates public/og.jpg (1200x630) — navy gradient, wordmark, tagline and vessel render.
 import sharp from 'sharp';
+import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
@@ -22,14 +23,31 @@ const background = `
   </defs>
   <rect width="${W}" height="${H}" fill="url(#bg)"/>
   <rect width="${W}" height="${H}" fill="url(#glow)"/>
-  <text x="84" y="252" font-family="Arial, Helvetica, sans-serif" font-size="88" font-weight="800" letter-spacing="6" fill="#ffffff">LIGMAX</text>
-  <path d="M84 292 c40 -26 80 -26 120 0 s80 26 120 0 s80 -26 120 0" stroke="#7ea4e0" stroke-width="7" fill="none" stroke-linecap="round"/>
-  <text x="84" y="368" font-family="Arial, Helvetica, sans-serif" font-size="30" fill="#c3cee6">Autonomous Surface Vessel Team — NTNU Trondheim</text>
-  <text x="84" y="416" font-family="Arial, Helvetica, sans-serif" font-size="26" fill="#93a5cd">Njord — The Autonomous Ship Challenge 2026</text>
+  <text x="88" y="330" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#eef3fc">Autonomous Surface</text>
+  <text x="88" y="372" font-family="Arial, Helvetica, sans-serif" font-size="34" font-weight="700" fill="#eef3fc">Vessel Team</text>
+  <text x="88" y="410" font-family="Arial, Helvetica, sans-serif" font-size="24" fill="#a8b6d6">NTNU Trondheim</text>
+  <text x="88" y="440" font-family="Arial, Helvetica, sans-serif" font-size="17" fill="#6f7ea6">Njord — The Autonomous Ship Challenge 2026</text>
 </svg>`;
 
+// Real Ligmax logo, recoloured white for the dark background and rasterised at high
+// resolution so it stays crisp, then trimmed of its transparent margins.
+const logoSvg = readFileSync(path.join(root, 'src/assets/ligmax-logo.svg'), 'utf8')
+  .replace(/fill="#(203a70|142962|353b44)"/g, 'fill="#ffffff"')
+  .replace(/width="300"/, 'width="1200"')
+  .replace(/height="148\.3425414364641"/, 'height="593.37"');
+
+const logo = await sharp(Buffer.from(logoSvg))
+  .trim()
+  .resize({ width: 360 })
+  .png()
+  .toBuffer();
+
+// Trim the render's transparent padding, then size the vessel as the hero on the
+// right — vertically centred and fully in frame. The logo + tagline form one
+// cohesive, vertically-centred block on the left, clear of the vessel.
 const boat = await sharp(path.join(root, 'src/assets/vessel-render.png'))
-  .resize({ width: 620 })
+  .trim()
+  .resize({ width: 700 })
   .png()
   .toBuffer();
 
@@ -39,8 +57,13 @@ await sharp(Buffer.from(background))
   .composite([
     {
       input: boat,
-      left: W - boatMeta.width + 40,
-      top: H - boatMeta.height + 30,
+      left: W - boatMeta.width - 36,
+      top: Math.round(315 - boatMeta.height / 2),
+    },
+    {
+      input: logo,
+      left: 88,
+      top: 176,
     },
   ])
   .jpeg({ quality: 88 })
